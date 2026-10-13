@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/data-world-logo.png" alt="Data World logo" width="240">
+  <img src="assets/data-world-wordmark.svg" alt="DataWorld logo" width="480">
   <p><strong>Scaling Data Environments from Scratch</strong></p>
   <p>Specify the world behind the files. Generate the data. Ground the supervision.</p>
   <p>

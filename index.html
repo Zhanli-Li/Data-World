@@ -10,7 +10,7 @@
   <style>
     :root { --ink:#18332e; --body:#42564f; --muted:#677b73; --green:#296959; --blue:#39659b; --line:#dfe8e1; --paper:#f8faf8; --soft:#eef4ef; --white:#fff; --radius:22px; }
     * { box-sizing:border-box; }
-    html { scroll-behavior:smooth; scroll-padding-top:90px; }
+    html { scroll-behavior:smooth; scroll-padding-top:116px; }
     body { margin:0; background:var(--paper); color:var(--body); font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
     a { color:var(--green); text-underline-offset:4px; }
     button,a { -webkit-tap-highlight-color:transparent; }
@@ -26,19 +26,49 @@
     .wrap { width:min(1120px,calc(100% - 48px)); margin-inline:auto; }
     .skip { position:fixed; z-index:100; top:12px; left:16px; padding:8px 16px; background:white; transform:translateY(-160%); }
     .skip:focus { transform:none; }
-    .header { position:sticky; top:0; z-index:20; height:70px; border-bottom:1px solid rgba(223,232,225,.8); background:rgba(248,250,248,.94); backdrop-filter:blur(14px); }
-    .header-inner { height:100%; display:flex; align-items:center; justify-content:space-between; gap:20px; }
-    .brand { display:flex; align-items:center; flex:none; text-decoration:none; }
-    .brand .longcat-logo { width:172px; height:auto; }
-    nav { display:flex; align-items:center; gap:25px; }
-    nav a { text-decoration:none; font-size:13px; color:var(--muted); font-weight:550; }
-    nav a:hover { color:var(--green); }
-    nav .nav-code { color:var(--ink); border:1px solid var(--line); padding:5px 12px; border-radius:8px; }
+    .header { position:fixed; inset:0 0 auto; z-index:20; padding-top:24px; pointer-events:none; }
+    .header-inner { position:relative; min-height:64px; display:flex; align-items:center; gap:32px; padding:8px 26px; border:1px solid #dfe8e180; border-radius:999px; background:rgba(248,250,248,.82); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); box-shadow:0 4px 24px #18332e04; pointer-events:auto; transition:background-color .25s,border-color .25s,box-shadow .25s; }
+    .header.is-scrolled .header-inner { background:rgba(255,255,255,.94); border-color:#d3e0d6; box-shadow:0 8px 32px #18332e12; }
+    .brand { display:flex; align-items:center; gap:12px; flex:none; min-height:44px; text-decoration:none; }
+    .brand .longcat-logo { width:132px; height:auto; }
+    .brand-divider { width:1px; height:22px; background:var(--line); flex:none; }
+    .brand .nav-wordmark { width:136px; height:auto; flex:none; }
+    .site-nav { display:flex; align-items:center; justify-content:space-between; flex:1; gap:20px; min-width:0; }
+    .nav-primary,.nav-secondary { display:flex; align-items:center; gap:22px; }
+    .site-nav a { position:relative; display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:44px; padding:5px 0; text-decoration:none; white-space:nowrap; font-size:13px; color:var(--muted); font-weight:550; transition:color .2s; }
+    .site-nav a:hover,.site-nav a[aria-current="location"] { color:var(--green); }
+    .nav-primary a::after { content:""; position:absolute; left:0; right:0; bottom:7px; height:2px; background:var(--green); border-radius:2px; transform:scaleX(0); transition:transform .2s; }
+    .nav-primary a[aria-current="location"]::after { transform:scaleX(1); }
+    .nav-secondary { padding-left:22px; border-left:1px solid var(--line); }
+    .site-nav .nav-code { color:var(--ink); }
+    .nav-code img { width:17px; height:17px; }
+    .nav-toggle { display:none; align-items:center; justify-content:center; flex:none; width:44px; height:44px; padding:0; border:1px solid var(--line); border-radius:50%; color:var(--ink); background:transparent; }
+    .nav-toggle svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; }
+    .nav-toggle .menu-close,.nav-toggle[aria-expanded="true"] .menu-open { display:none; }
+    .nav-toggle[aria-expanded="true"] .menu-close { display:block; }
+    main { padding-top:96px; }
+    @media (max-width:980px) {
+      .header-inner { gap:16px; padding-inline:20px; }
+      .nav-ready .header-inner { justify-content:space-between; }
+      .nav-ready .nav-toggle { display:flex; }
+      .nav-ready .site-nav { display:none; position:absolute; top:calc(100% + 10px); left:0; right:0; max-height:calc(100vh - 130px); max-height:calc(100dvh - 130px); overflow-y:auto; padding:12px; border:1px solid var(--line); border-radius:22px; background:#fdfefd; box-shadow:0 12px 36px #18332e15; }
+      .nav-ready .site-nav.is-open { display:block; }
+      .nav-ready .nav-primary,.nav-ready .nav-secondary { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px; }
+      .nav-ready .site-nav a { justify-content:flex-start; padding:10px 14px; border-radius:12px; }
+      .nav-ready .nav-primary a::after { display:none; }
+      .nav-ready .site-nav a:hover,.nav-ready .site-nav a[aria-current="location"] { background:var(--soft); }
+      .nav-ready .nav-secondary { margin-top:8px; padding:8px 0 0; border-left:0; border-top:1px solid var(--line); }
+      .header:not(.nav-ready) { position:sticky; padding-top:12px; }
+      .header:not(.nav-ready) .header-inner { flex-wrap:wrap; border-radius:22px; }
+      .header:not(.nav-ready) .site-nav { flex-basis:100%; flex-wrap:wrap; }
+      .header:not(.nav-ready) .nav-primary { flex-wrap:wrap; gap:6px 16px; }
+      .header:not(.nav-ready) + main { padding-top:0; }
+    }
     .hero { position:relative; overflow:hidden; text-align:center; padding:49px 0 0; }
     .hero::before { content:""; position:absolute; inset:-35px 0; z-index:-1; transform:translate3d(0,var(--hero-drift,0px),0); background:radial-gradient(ellipse at 21% 23%,#eaf3ed 0,transparent 47%),radial-gradient(ellipse at 85% 16%,#edf2fa 0,transparent 42%); }
     .eyebrow { display:flex; align-items:center; justify-content:center; gap:9px; color:var(--green); font-size:11px; font-weight:650; letter-spacing:2px; text-transform:uppercase; }
     .eyebrow::before { content:""; width:6px; height:6px; border-radius:50%; background:#67967e; }
-    .hero-logo { width:154px; margin:20px auto 16px; mix-blend-mode:multiply; }
+    .hero-logo { width:min(420px,85%); margin:30px auto 24px; }
     .hero h1 { max-width:830px; margin:auto; }
     .hero h1 span { display:block; color:var(--green); }
     .hero-sub { max-width:640px; margin:22px auto 0; font-size:17px; line-height:1.75; color:var(--muted); }
@@ -59,8 +89,7 @@
     .platform-logo { width:20px; height:20px; object-fit:contain; flex:none; }
     .button.primary .platform-logo { filter:invert(1); }
     .platform-logo.arxiv { filter:invert(26%) sepia(67%) saturate(1267%) hue-rotate(331deg) brightness(82%) contrast(91%); }
-    @media (max-width:650px) { .brand .longcat-logo { width:140px; } }
-    @media (max-width:400px) { nav a[href="#resources"] { display:none; } }
+    @media (max-width:650px) { .brand { gap:9px; } .brand .longcat-logo { width:96px; } .brand .nav-wordmark { width:112px; } .brand-divider { height:18px; } }
     .icon { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex:none; }
     .release-note { margin:12px 0 0; color:var(--muted); font-size:11px; }
     section { padding:86px 0; }
@@ -72,18 +101,36 @@
     .intro-text strong { color:var(--ink); }
     .quote { margin-top:27px; border-left:2px solid #83ac93; padding-left:18px; color:var(--green); font-size:20px; line-height:1.5; letter-spacing:-.5px; }
     .world-card { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:26px; box-shadow:0 16px 55px #18332e06; }
-    .card-top { display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--muted); padding-bottom:18px; border-bottom:1px solid var(--line); }
-    .card-top span:last-child { color:var(--green); background:var(--soft); padding:2px 8px; border-radius:5px; }
-    .world-path { margin-top:20px; display:flex; align-items:center; gap:8px; }
-    .node { background:#f1f5f0; border:1px solid #dde7dd; border-radius:10px; padding:9px 4px; text-align:center; font-size:11px; flex:1; color:var(--ink); }
-    .node.blue { background:#edf3fa; border-color:#d9e3f2; }
-    .arrow { font-size:16px; color:#90a598; }
-    .file-list { margin:23px 0; padding:15px 18px; background:#f7f9f7; border-radius:10px; font:12px/2 ui-monospace,SFMono-Regular,Consolas,monospace; color:var(--muted); }
-    .file-list span { display:block; }
-    .file-list b { color:var(--green); font-weight:500; }
-    .question { border-top:1px solid var(--line); padding-top:16px; font-size:14px; color:var(--ink); line-height:1.7; }
-    .question small { display:block; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
-    .illustrative { font-size:10px; color:var(--muted); margin-top:12px; }
+    .card-top { display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:42px; padding-bottom:10px; border-bottom:1px solid var(--line); font-size:10px; color:var(--muted); letter-spacing:1px; }
+    .world-demo-controls { display:flex; gap:5px; flex:none; }
+    .world-demo-controls[hidden] { display:flex; visibility:hidden; }
+    .world-demo-controls button { min-height:30px; padding:3px 7px; border:1px solid var(--line); border-radius:6px; color:var(--green); background:var(--paper); font-size:10px; letter-spacing:0; }
+    .world-demo-controls button:disabled { color:var(--muted); cursor:default; }
+    .world-scene { width:100%; height:236px; margin-top:12px; display:block; overflow:visible; }
+    .world-scene text { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:var(--muted); font-size:11px; }
+    .world-scene .dag-node rect { fill:#eef4ef; stroke:#cdded1; }
+    .world-scene .dag-node text { fill:var(--ink); font-size:12px; font-weight:550; text-anchor:middle; }
+    .world-scene .world-edge { fill:none; stroke:#97b6a2; stroke-width:1.3; stroke-linecap:round; stroke-dasharray:1; }
+    .world-scene .dag-arrow { fill:none; stroke:#7b9e88; stroke-width:1.4; }
+    .world-scene .data-file rect { fill:#fff; stroke:#cbdcd0; }
+    .world-scene .data-file .file-grid { fill:none; stroke:#c4d5ca; stroke-width:1; }
+    .world-scene .data-file .file-head { fill:#d9eade; stroke:none; }
+    .world-scene .data-file text { font-size:10px; text-anchor:middle; }
+    .world-scene .env-boundary { fill:none; stroke:#81aa90; stroke-width:1.4; stroke-dasharray:1; }
+    .world-scene .env-tint { fill:#eef6ef; opacity:.5; }
+    .world-scene .env-label { fill:var(--green); font:600 12px ui-monospace,SFMono-Regular,Consolas,monospace; }
+    .world-scene .scene-heading { font-size:10px; letter-spacing:1px; }
+    .world-scene .task-sheet { fill:#f8faf8; stroke:#b6c9be; }
+    .world-scene .task-front { fill:#edf3fa; stroke:#b5c8df; }
+    .world-scene .task-line { stroke:#96adc7; stroke-width:2; stroke-linecap:round; }
+    .world-scene .task-label { fill:var(--blue); font-size:12px; font-weight:600; text-anchor:middle; }
+    .world-demo-status { height:32px; margin-top:2px; font-size:11px; line-height:1.5; color:var(--green); }
+    .question { min-height:76px; padding-top:11px; border-top:1px solid var(--line); font-size:12px; color:var(--ink); line-height:1.7; }
+    .question small { display:block; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+    .illustrative { font-size:9px; color:var(--muted); margin-top:8px; line-height:1.7; }
+    @media (max-width:650px) { .world-scene { height:210px; } .question { min-height:92px; } }
+    @media (max-width:400px) { .world-card { padding:16px !important; } .card-top { font-size:9px; letter-spacing:.5px; } .world-demo-controls button { font-size:9px; padding:3px 5px; } }
+    @media print { .world-demo-controls { visibility:hidden !important; } }
     .band { background:#eef3ef; border-block:1px solid var(--line); }
     .figure-frame { background:white; padding:25px; border:1px solid var(--line); border-radius:var(--radius); }
     .figure-button { display:block; width:100%; padding:0; border:0; background:white; cursor:zoom-in !important; border-radius:8px; }
@@ -214,24 +261,17 @@
     .dialog-top { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-bottom:16px; }
     .dialog-top p { font-size:14px; }
     .dialog-close { background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:5px 13px; font-size:12px; }
-    @media (max-width:850px) { .intro-grid { gap:32px; } .section-head { align-items:flex-start; flex-direction:column; gap:16px; } .section-intro { max-width:650px; } .results-panel { gap:26px; padding:28px; } nav { gap:16px; } }
+    @media (max-width:850px) { .intro-grid { gap:32px; } .section-head { align-items:flex-start; flex-direction:column; gap:16px; } .section-intro { max-width:650px; } .results-panel { gap:26px; padding:28px; } }
     @media (max-width:650px) {
-      .wrap { width:calc(100% - 36px); } .header { height:60px; } .header-inner { gap:14px; } nav { gap:13px; } nav a { font-size:12px; } nav .hide-mobile { display:none; } nav .nav-code { padding:4px 8px; }
-      .hero { padding-top:31px; } .hero-logo { width:128px; margin:18px auto; } h1 { letter-spacing:-1.7px; } .hero-sub { font-size:15px; } .authors { margin-top:23px; font-size:11px; } .authors span { margin:0 3px; }
+      .wrap { width:calc(100% - 36px); } .header { padding-top:14px; } .header-inner { min-height:60px; padding:7px 15px; } main { padding-top:88px; } html { scroll-padding-top:100px; }
+      .hero { padding-top:31px; } .hero-logo { width:min(300px,92%); margin:24px auto 20px; } h1 { letter-spacing:-1.7px; } .hero-sub { font-size:15px; } .authors { margin-top:23px; font-size:11px; } .authors span { margin:0 3px; }
       .affiliations .affiliation-list { grid-template-columns:1fr; } .button { padding:8px 13px; font-size:12px; } .actions { gap:8px; }
       section { padding:57px 0; } .intro-grid,.benchmark-grid,.results-panel { grid-template-columns:1fr; } .intro-grid { gap:28px; } .intro-text p { font-size:14px; } .quote { font-size:18px; } .world-card { padding:20px; }
       .figure-frame { padding:12px; border-radius:14px; } .figure-caption { font-size:10px; gap:10px; } .steps { grid-template-columns:1fr 1fr; gap:24px 19px; } .benchmark-card { padding:22px; } .benchmark-card header { flex-wrap:wrap; } .split-metrics { gap:24px; }
       .results { padding-top:0; } .results-panel { padding:25px; } .results-panel h2 { font-size:29px; } .gain { padding:15px; } .gain strong { font-size:27px; } .resource-grid { grid-template-columns:1fr; } .resource { padding:21px; } .resource-type { margin-bottom:12px; } .footer-inner { flex-direction:column; gap:8px; text-align:center; } dialog { padding:12px; }
     }
-    @media (max-width:360px) { .header-inner { gap:8px; } .brand .longcat-logo { width:130px; } nav { gap:8px; } nav a { font-size:11px; } nav .nav-code { padding:4px 6px; } }
+    @media (max-width:360px) { .header-inner { gap:8px; } .brand { gap:7px; } .brand .longcat-logo { width:78px; } .brand .nav-wordmark { width:96px; } }
     /* Scroll effects enhance the static page; content is never hidden by default. */
-    .reading-progress { position:absolute; bottom:-1px; left:0; width:100%; height:3px; background:linear-gradient(90deg,#296959,#89b99c); transform:scaleX(0); transform-origin:left; pointer-events:none; }
-    .header { transition:background-color .25s,box-shadow .25s; }
-    .header.is-scrolled { background:rgba(248,250,248,.98); box-shadow:0 6px 24px #18332e0b; }
-    nav a[href^="#"] { position:relative; transition:color .2s; }
-    nav a[href^="#"]::after { content:""; position:absolute; left:0; right:0; bottom:-7px; height:2px; border-radius:2px; background:var(--green); transform:scaleX(0); transform-origin:left; transition:transform .25s; }
-    nav a[aria-current="location"] { color:var(--green); }
-    nav a[aria-current="location"]::after { transform:scaleX(1); }
     .hero-logo { transform:translate3d(0,var(--logo-drift,0px),0); }
     .world-card,.benchmark-card,.training-card,.figure-frame { transition:border-color .25s,box-shadow .25s; }
     @media (hover:hover) and (pointer:fine) {
@@ -244,6 +284,7 @@
     }
     @media print {
       .header,.skip { display:none; }
+      main { padding-top:0; }
       .hero::before,.hero-logo { transform:none; }
     }
   </style>
@@ -252,18 +293,19 @@
   <a class="skip" href="#main">Skip to content</a>
   <header class="header">
     <div class="wrap header-inner">
-      <a class="brand" href="#top" aria-label="LongCat Interaction — Data World home"><img class="longcat-logo" src="assets/longcat-interaction-logo.png" alt="LongCat Interaction" width="645" height="178"></a>
-      <nav aria-label="Main navigation">
-        <a class="hide-mobile" href="#about">Overview</a><a href="#method">Method</a><a class="hide-mobile" href="#benchmark">Benchmark</a><a href="#resources">Resources</a><a class="nav-code" href="https://github.com/Zhanli-Li/Data-World" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      <a class="brand" href="#top" aria-label="LongCat Interaction — Data World home"><img class="longcat-logo" src="assets/longcat-interaction-logo.png" alt="LongCat Interaction" width="645" height="178"><span class="brand-divider" aria-hidden="true"></span><img class="nav-wordmark" src="assets/data-world-wordmark.svg" alt="DataWorld" width="2050" height="358"></a>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="site-nav"><svg class="menu-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6H20M4 12H20M4 18H20"/></svg><svg class="menu-close" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6L18 18M18 6L6 18"/></svg></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <div class="nav-primary"><a href="#top" aria-current="location">Home</a><a href="#about">Overview</a><a href="#method">Method</a><a href="#benchmark">Benchmark</a><a href="#resources">Resources</a></div>
+        <div class="nav-secondary"><a class="nav-code" href="https://github.com/Zhanli-Li/Data-World" target="_blank" rel="noopener noreferrer"><img src="assets/platform_logos/github-logo.svg" alt="" width="17" height="17">Code <span aria-hidden="true">↗</span></a></div>
       </nav>
     </div>
-    <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
   </header>
   <main id="main">
     <div class="hero" id="top">
       <div class="wrap">
         <p class="eyebrow">Mechanism-first data environments</p>
-        <img class="hero-logo" src="assets/data-world-logo.png" alt="Data World" width="1029" height="858" fetchpriority="high">
+        <img class="hero-logo" src="assets/data-world-wordmark.svg" alt="DataWorld" width="2050" height="358" fetchpriority="high">
         <h1>Scaling Data Environments<span>from Scratch</span></h1>
         <p class="hero-sub">Specify the world behind the files.<br>Generate realistic data. Ground analytical supervision.</p>
         <div class="authors" aria-label="Paper authors">
@@ -302,14 +344,47 @@
           <p><strong>Data World reverses the process.</strong> We specify mechanisms first, construct a coherent canonical state, and project it into realistic, imperfect files. Independent audits check whether selected analytical targets remain recoverable from those observations.</p>
           <div class="quote">Known mechanisms.<br>Imperfect observations.<br>Grounded supervision.</div>
         </div>
-        <div class="world-card">
-          <div class="card-top"><span>A WORLD, FROM THE INSIDE</span><span>Mechanism → observation</span></div>
-          <div class="world-path" aria-label="Illustrative dependency: supply to inventory to delivery">
-            <span class="node">Supply</span><span class="arrow" aria-hidden="true">→</span><span class="node">Inventory</span><span class="arrow" aria-hidden="true">→</span><span class="node blue">Delivery</span>
-          </div>
-          <div class="file-list" aria-label="Illustrative analyst-visible files"><span><b>env/</b></span><span>├── supplier_orders.csv</span><span>├── warehouse_snapshots.xlsx</span><span>└── delivery_events.csv</span></div>
-          <p class="question"><small>The analytical question</small>What explains the rise in late deliveries, and how does the effect vary across warehouses?</p>
-          <p class="illustrative">Illustrative workflow, not a released benchmark example. The solver sees files and a task—not the hidden mechanisms or rubric.</p>
+        <div class="world-card" id="world-demo" role="group" aria-label="A DAG expands layer by layer into an environment, then analytical tasks" aria-describedby="world-demo-note">
+          <div class="card-top"><span>DAG → ENV → TASK</span><div class="world-demo-controls" id="world-demo-controls" hidden><button type="button" id="world-demo-toggle" aria-label="Pause world generation animation">Pause</button><button type="button" id="world-demo-replay" aria-label="Replay world generation animation">Replay ↻</button></div></div>
+          <svg class="world-scene" viewBox="0 0 420 220" role="img" aria-labelledby="world-scene-title world-scene-desc">
+            <title id="world-scene-title">DataWorld Gen: DAG to environment to task</title>
+            <desc id="world-scene-desc">Supply, Inventory and Delivery expand into connected data files in successive layers. The complete environment is then used to synthesize tasks and grounded rubrics.</desc>
+            <text x="12" y="15" class="scene-heading">DataWorld Gen · layer-wise expansion</text>
+            <g class="env-shell"><rect class="env-tint" x="9" y="28" width="281" height="178" rx="16"/><rect class="env-boundary" x="9" y="28" width="281" height="178" rx="16" pathLength="1"/><text class="env-label" x="24" y="47">env/</text></g>
+            <g class="dag-core">
+              <g class="dag-node"><rect x="18" y="99" width="67" height="30" rx="8"/><text x="51.5" y="119">Supply</text></g>
+              <path class="world-edge" d="M85 114H110" pathLength="1"/><path class="dag-arrow" d="M105 110L110 114L105 118"/>
+              <g class="dag-node"><rect x="110" y="99" width="77" height="30" rx="8"/><text x="148.5" y="119">Inventory</text></g>
+              <path class="world-edge" d="M187 114H210" pathLength="1"/><path class="dag-arrow" d="M205 110L210 114L205 118"/>
+              <g class="dag-node"><rect x="210" y="99" width="68" height="30" rx="8"/><text x="244" y="119">Delivery</text></g>
+            </g>
+            <g class="expansion-layer" data-layer="0">
+              <path class="world-edge" d="M51 99V78M51 129V148" pathLength="1"/>
+              <g class="data-file"><rect x="27" y="54" width="48" height="24" rx="4"/><rect class="file-head" x="31" y="58" width="40" height="4" rx="1"/><path class="file-grid" d="M31 67H71M31 72H71M44 64V74M58 64V74"/></g>
+              <g class="data-file"><rect x="27" y="148" width="48" height="24" rx="4"/><rect class="file-head" x="31" y="152" width="40" height="4" rx="1"/><path class="file-grid" d="M31 161H71M31 166H71M44 158V168M58 158V168"/><text x="51" y="187">orders.csv</text></g>
+            </g>
+            <g class="expansion-layer" data-layer="1">
+              <path class="world-edge" d="M148 99V78M148 129V148M75 66H124M75 160H124" pathLength="1"/>
+              <g class="data-file"><rect x="124" y="54" width="48" height="24" rx="4"/><rect class="file-head" x="128" y="58" width="40" height="4" rx="1"/><path class="file-grid" d="M128 67H168M128 72H168M141 64V74M155 64V74"/></g>
+              <g class="data-file"><rect x="124" y="148" width="48" height="24" rx="4"/><rect class="file-head" x="128" y="152" width="40" height="4" rx="1"/><path class="file-grid" d="M128 161H168M128 166H168M141 158V168M155 158V168"/><text x="148" y="187">stock.xlsx</text></g>
+            </g>
+            <g class="expansion-layer" data-layer="2">
+              <path class="world-edge" d="M244 99V78M244 129V148M172 66H220M172 160H220" pathLength="1"/>
+              <g class="data-file"><rect x="220" y="54" width="48" height="24" rx="4"/><rect class="file-head" x="224" y="58" width="40" height="4" rx="1"/><path class="file-grid" d="M224 67H264M224 72H264M237 64V74M251 64V74"/></g>
+              <g class="data-file"><rect x="220" y="148" width="48" height="24" rx="4"/><rect class="file-head" x="224" y="152" width="40" height="4" rx="1"/><path class="file-grid" d="M224 161H264M224 166H264M237 158V168M251 158V168"/><text x="244" y="187">events.csv</text></g>
+            </g>
+            <g class="task-connection"><path class="world-edge" d="M292 114H330" pathLength="1"/><path class="dag-arrow" d="M325 110L330 114L325 118"/></g>
+            <g class="task-result">
+              <rect class="task-sheet" x="345" y="77" width="53" height="69" rx="6"/>
+              <rect class="task-sheet" x="338" y="83" width="53" height="69" rx="6"/>
+              <rect class="task-front" x="331" y="89" width="53" height="69" rx="6"/>
+              <path class="task-line" d="M342 104H372" pathLength="1" stroke-dasharray="1"/><path class="task-line" d="M342 114H367" pathLength="1" stroke-dasharray="1"/><path class="task-line" d="M342 124H372" pathLength="1" stroke-dasharray="1"/><path class="task-line" d="M342 134H361" pathLength="1" stroke-dasharray="1"/>
+              <text class="task-label" x="357" y="181">Task</text><text x="357" y="197" text-anchor="middle">+ rubric</text>
+            </g>
+          </svg>
+          <p class="world-demo-status" id="world-demo-status" role="status">DAG → layer-wise environment generation → task synthesis.</p>
+          <p class="question"><small>Example synthesized task</small>What explains the rise in late deliveries, and how does the effect vary across warehouses?</p>
+          <p class="illustrative" id="world-demo-note">Illustrative animation, not a live generation run. The solver sees the environment and task—not generation records or rubrics.</p>
         </div>
       </div>
     </section>
@@ -593,15 +668,62 @@
       dialog.addEventListener('close', () => trigger.focus());
     });
 
+    // One shared navigation for desktop and mobile; links also work without JS.
+    (() => {
+      const header = document.querySelector('.header');
+      const menu = document.getElementById('site-nav');
+      const toggle = document.getElementById('nav-toggle');
+      const mobile = window.matchMedia('(max-width: 980px)');
+
+      function setOpen(open, restoreFocus = false) {
+        menu.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', `${open ? 'Close' : 'Open'} navigation menu`);
+        if (restoreFocus) toggle.focus();
+      }
+
+      toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+      menu.addEventListener('click', (event) => {
+        const link = event.target.closest('a');
+        if (!link || !mobile.matches) return;
+        setOpen(false, true);
+        const href = link.getAttribute('href');
+        if (href.startsWith('#')) {
+          const target = document.getElementById(href.slice(1));
+          if (target) {
+            target.setAttribute('tabindex', '-1');
+            target.focus({ preventScroll: true });
+            target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
+          }
+        }
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && menu.classList.contains('is-open')) setOpen(false, true);
+      });
+      document.addEventListener('click', (event) => {
+        if (!header.contains(event.target)) setOpen(false);
+      });
+      header.addEventListener('focusout', (event) => {
+        if (event.relatedTarget && !header.contains(event.relatedTarget)) setOpen(false);
+      });
+      mobile.addEventListener('change', () => {
+        const focused = document.activeElement;
+        setOpen(false);
+        if (mobile.matches && menu.contains(focused)) toggle.focus();
+        else if (!mobile.matches && focused === toggle) menu.querySelector('a').focus();
+      });
+      window.addEventListener('hashchange', () => setOpen(false));
+      header.classList.add('nav-ready');
+    })();
+
     // Progressive enhancement: original text, scores and layout remain intact.
     (() => {
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       const desktopMotion = window.matchMedia('(min-width: 851px) and (pointer: fine)');
       const header = document.querySelector('.header');
       const hero = document.querySelector('.hero');
-      const progress = document.getElementById('reading-progress');
       const sections = Array.from(document.querySelectorAll('main > section[id]'));
-      const navLinks = Array.from(document.querySelectorAll('nav a[href^="#"]'));
+      const navLinks = Array.from(document.querySelectorAll('.site-nav a[href^="#"]'));
       const runningAnimations = new Set();
       const easing = 'cubic-bezier(.22,1,.36,1)';
       let frame = null;
@@ -631,9 +753,6 @@
       function updateScroll() {
         frame = null;
         const scrollTop = Math.max(0, window.scrollY);
-        const scrollRange = document.documentElement.scrollHeight - window.innerHeight;
-        const fraction = scrollRange > 0 ? Math.min(1, scrollTop / scrollRange) : 0;
-        progress.style.transform = `scaleX(${fraction})`;
         header.classList.toggle('is-scrolled', scrollTop > 16);
 
         // Small bounded parallax on desktop only; never intercept native scrolling.
@@ -642,7 +761,7 @@
         hero.style.setProperty('--logo-drift', `${Math.min(16, drift * .025)}px`);
 
         const readingLine = header.offsetHeight + Math.min(160, window.innerHeight * .2);
-        let current = '';
+        let current = 'top';
         sections.forEach((section) => {
           if (section.getBoundingClientRect().top <= readingLine) current = section.id;
         });
@@ -662,7 +781,7 @@
       window.addEventListener('scroll', scheduleScroll, { passive: true });
       window.addEventListener('resize', scheduleScroll);
       window.addEventListener('load', scheduleScroll);
-      // Opening tables or loading figures can change the total reading distance.
+      // Opening tables or loading figures can change section positions.
       if ('ResizeObserver' in window) new ResizeObserver(scheduleScroll).observe(document.body);
       updateScroll();
 
@@ -739,6 +858,162 @@
       reducedMotion.addEventListener('change', finishMotion);
       finishMotion();
       window.addEventListener('beforeprint', () => runningAnimations.forEach((animation) => animation.cancel()));
+    })();
+
+    // A finite, replayable illustration: no backend request or fabricated live run.
+    (() => {
+      const demo = document.getElementById('world-demo');
+      const controls = document.getElementById('world-demo-controls');
+      const toggle = document.getElementById('world-demo-toggle');
+      const replay = document.getElementById('world-demo-replay');
+      const status = document.getElementById('world-demo-status');
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const duration = 9000;
+      const stages = [
+        { at: 0, label: 'Supply → Inventory → Delivery · a causal DAG.' },
+        { at: 1400, label: 'Layer 1 · supply expands into connected records.' },
+        { at: 2600, label: 'Layer 2 · inventory grows from upstream supply.' },
+        { at: 3800, label: 'Layer 3 · delivery completes the connected world.' },
+        { at: 5200, label: 'Env complete · coherent, heterogeneous data files.' },
+        { at: 6500, label: 'Synthesizing tasks from the completed environment…' },
+        { at: duration, label: 'Env + task · ready for analysis.' }
+      ];
+      let animations = [];
+      let elapsed = 0;
+      let lastTime = null;
+      let frame = null;
+      let inView = false;
+      let started = false;
+      let completed = false;
+      let userPaused = false;
+      let stageIndex = -1;
+
+      function updateStage() {
+        let index = stages.length - 1;
+        while (index > 0 && elapsed < stages[index].at) index -= 1;
+        if (index === stageIndex) return;
+        stageIndex = index;
+        demo.dataset.stage = String(index);
+        status.textContent = stages[index].label;
+      }
+
+      function stopClock() {
+        if (frame !== null) window.cancelAnimationFrame(frame);
+        frame = null;
+        lastTime = null;
+      }
+
+      function finish(staticMode = false) {
+        stopClock();
+        animations.forEach((animation) => animation.cancel());
+        animations = [];
+        elapsed = duration;
+        completed = true;
+        stageIndex = -1;
+        updateStage();
+        demo.dataset.playback = staticMode ? 'static' : 'complete';
+        toggle.disabled = true;
+        toggle.textContent = 'Complete';
+        toggle.setAttribute('aria-label', 'World generation animation complete');
+        controls.hidden = staticMode;
+      }
+
+      function tick(time) {
+        frame = null;
+        if (lastTime !== null) elapsed = Math.min(duration, elapsed + time - lastTime);
+        lastTime = time;
+        animations.forEach((animation) => { animation.currentTime = elapsed; });
+        updateStage();
+        if (elapsed >= duration) { finish(); return; }
+        frame = window.requestAnimationFrame(tick);
+      }
+
+      function syncPlayback() {
+        stopClock();
+        if (reducedMotion.matches) { finish(true); return; }
+        if (!started || completed) return;
+        const playing = inView && !document.hidden && !userPaused;
+        demo.dataset.playback = playing ? 'running' : 'paused';
+        toggle.textContent = userPaused ? 'Resume' : 'Pause';
+        toggle.setAttribute('aria-label', `${userPaused ? 'Resume' : 'Pause'} world generation animation`);
+        if (playing) frame = window.requestAnimationFrame(tick);
+      }
+
+      function addAnimation(element, keyframes, delay, animationDuration = 650, easing = 'cubic-bezier(.22,1,.36,1)') {
+        const animation = element.animate(keyframes, { duration: animationDuration, delay, easing, fill: 'backwards' });
+        // Every effect shares one clock, including delays, pause and replay.
+        animation.pause();
+        animation.currentTime = 0;
+        animations.push(animation);
+      }
+
+      function appear(element, delay, x = 0, y = 0) {
+        addAnimation(element, [{ opacity: 0, transform: `translate(${x}px, ${y}px)` }, { opacity: 1, transform: 'translate(0, 0)' }], delay);
+      }
+
+      function draw(element, delay, animationDuration = 650) {
+        addAnimation(element, [{ opacity: 0, strokeDashoffset: 1 }, { opacity: 1, strokeDashoffset: 0 }], delay, animationDuration, 'ease-in-out');
+      }
+
+      function start() {
+        if (reducedMotion.matches) { finish(true); return; }
+        stopClock();
+        animations.forEach((animation) => animation.cancel());
+        animations = [];
+        elapsed = 0;
+        started = true;
+        completed = false;
+        userPaused = false;
+        stageIndex = -1;
+        controls.hidden = false;
+        toggle.disabled = false;
+        // All positions and container dimensions stay fixed; only the contents animate.
+        demo.querySelectorAll('.dag-node').forEach((node, index) => appear(node, index * 260, -8));
+        demo.querySelectorAll('.dag-core .world-edge').forEach((edge, index) => draw(edge, 200 + index * 260, 400));
+        demo.querySelectorAll('.dag-core .dag-arrow').forEach((arrow, index) => appear(arrow, 450 + index * 260));
+        demo.querySelectorAll('.expansion-layer').forEach((layer, index) => {
+          const delay = 1400 + index * 1200;
+          draw(layer.querySelector('.world-edge'), delay, 750);
+          layer.querySelectorAll('.data-file').forEach((file, fileIndex) => {
+            appear(file, delay + 350 + fileIndex * 220, -6, fileIndex === 0 ? 14 : -14);
+          });
+        });
+        appear(demo.querySelector('.env-tint'), 5000);
+        draw(demo.querySelector('.env-boundary'), 5200, 900);
+        appear(demo.querySelector('.env-label'), 5650);
+        draw(demo.querySelector('.task-connection .world-edge'), 6300, 500);
+        appear(demo.querySelector('.task-connection .dag-arrow'), 6700);
+        demo.querySelectorAll('.task-sheet, .task-front').forEach((sheet, index) => appear(sheet, 6800 + index * 230, -12));
+        demo.querySelectorAll('.task-line').forEach((line, index) => draw(line, 7550 + index * 150, 350));
+        demo.querySelectorAll('.task-result text').forEach((label, index) => appear(label, 7850 + index * 160));
+        appear(demo.querySelector('.question'), 8250, 0, 5);
+        updateStage();
+        syncPlayback();
+      }
+
+      // Unsupported browsers and reduced-motion users see the complete static diagram.
+      if (!('IntersectionObserver' in window) || typeof demo.animate !== 'function') { finish(true); return; }
+      controls.hidden = reducedMotion.matches;
+      toggle.disabled = true;
+      toggle.textContent = 'Pause';
+      const observer = new IntersectionObserver((entries) => {
+        inView = entries[0].isIntersecting;
+        if (inView && !started && !completed && !reducedMotion.matches) start();
+        else syncPlayback();
+      }, { threshold: .08 });
+      observer.observe(demo);
+      toggle.addEventListener('click', () => { userPaused = !userPaused; syncPlayback(); });
+      replay.addEventListener('click', start);
+      document.addEventListener('visibilitychange', syncPlayback);
+      reducedMotion.addEventListener('change', () => {
+        if (reducedMotion.matches) finish(true);
+        else { controls.hidden = false; syncPlayback(); }
+      });
+      window.addEventListener('beforeprint', () => finish(true));
+      window.addEventListener('afterprint', () => {
+        if (!reducedMotion.matches) { controls.hidden = false; demo.dataset.playback = 'complete'; }
+      });
+      if (reducedMotion.matches) finish(true);
     })();
   </script>
 </body>

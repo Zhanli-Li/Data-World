@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2050" height="358" viewBox="56 145 2050 358" role="img" aria-labelledby="logo-title logo-desc" shape-rendering="geometricPrecision">
+  <title id="logo-title">DataWorld wordmark</title>
+  <desc id="logo-desc">Geometric DataWorld wordmark in violet and lime green, with smooth vector contours, pixel accents and a circuit line on a transparent background.</desc>
+  <g id="dataworld-wordmark" fill-rule="evenodd">
+    <g id="data" fill="#7548b1">
+      <path id="letter-D" d="M176 238H386Q390 238 393 241L449 297Q452 300 452 304V423Q452 428 448 432L392 484Q390 486 386 486H208V405H260V432Q260 436 264 436H364Q366 436 368 434L388 415Q390 413 390 410V329Q390 326 387 323L359 297Q357 295 354 295H210Z"/>
+      <path id="letter-a-1" d="M479 316H626Q634 316 640 322L655 335Q662 341 662 350V484H510Q500 484 492 477L482 467Q474 459 474 448V417Q474 408 481 401L494 387Q501 380 511 380H612V367Q612 360 605 360H494ZM526 417Q520 417 520 423V437Q520 443 526 443H612V417Z"/>
+      <path id="letter-t" d="M684 266H734V316H780V362H734V429Q734 440 745 440H790V484H721Q713 484 707 478L691 462Q684 455 684 446Z"/>
+      <path id="letter-a-2" d="M806 316H956Q962 316 969 322L985 337Q992 343 992 352V484H840Q830 484 822 477L813 468Q806 461 806 451V418Q806 408 813 401L827 387Q834 380 843 380H943V367Q943 360 936 360H821ZM857 417Q851 417 851 423V437Q851 443 857 443H943V417Z"/>
+    </g>
+    <g id="world" fill="#8dcc28">
+      <path id="letter-W" d="M968 244H1043L1113 397L1165 316H1185L1241 398L1282 316H1358L1271 480Q1269 484 1266 484H1226Q1222 484 1220 480L1177 404L1130 480Q1128 484 1124 484H1086Q1082 484 1080 480Z"/>
+      <path id="letter-o" d="M1406 316H1507Q1519 316 1528 324L1542 338Q1553 348 1553 362V438Q1553 451 1544 460L1529 475Q1520 484 1507 484H1402Q1389 484 1380 475L1366 461Q1357 452 1357 438V365Q1357 352 1366 341L1383 325Q1392 316 1406 316ZM1416 363Q1410 363 1410 369V432Q1410 438 1416 438H1495Q1501 438 1501 432V369Q1501 363 1495 363Z"/>
+      <path id="letter-r" d="M1615 316H1688V360H1636Q1630 360 1627 364Q1624 367 1624 374V484H1576V362Q1576 349 1585 339L1597 325Q1604 316 1615 316Z"/>
+      <path id="letter-l" d="M1707 264H1756V434Q1756 440 1760 444L1798 484H1738Q1733 484 1730 480L1711 461Q1707 457 1707 451Z"/>
+      <path id="letter-d" d="M1950 259H2000V380H1964V392H2000V436Q2000 450 1990 460L1972 479Q1967 484 1959 484H1848Q1838 484 1830 477L1810 457Q1800 447 1800 435V365Q1800 353 1809 343L1828 324Q1836 316 1848 316H1950ZM1859 362Q1850 362 1850 370V429Q1850 437 1859 437H1938Q1950 437 1950 425V370Q1950 362 1942 362Z"/>
+    </g>
+    <g id="pixel-accents">
+      <g fill="#7548b1">
+        <rect x="84" y="273" width="46" height="46" rx="2"/>
+        <rect x="174" y="355" width="34" height="33" rx="2"/>
+        <rect x="214" y="315" width="47" height="48" rx="2"/>
+        <rect x="1247" y="266" width="39" height="39" rx="2"/>
+        <rect x="1355" y="173" width="53" height="53" rx="2"/>
+        <rect x="2037" y="194" width="50" height="50" rx="2"/>
+      </g>
+      <g fill="#8dcc28">
+        <rect x="140" y="316" width="31" height="31" rx="2"/>
+        <rect x="140" y="396" width="35" height="35" rx="2"/>
+        <rect x="1220" y="311" width="27" height="27" rx="1.5"/>
+        <rect x="1293" y="220" width="34" height="35" rx="2"/>
+        <rect x="1994" y="219" width="23" height="23" rx="1.5"/>
+        <rect x="2020" y="263" width="25" height="25" rx="1.5"/>
+      </g>
+      <rect x="1336" y="262" width="28" height="29" rx="1" fill="none" stroke="#8dcc28" stroke-width="8"/>
+    </g>
+    <g id="circuit" fill="none" stroke-width="12" stroke-linejoin="round" stroke-linecap="square">
+      <path stroke="#7548b1" d="M1964 399H2063"/>
+      <path stroke="#8dcc28" d="M1963 399V386H1930V413H1963V399"/>
+      <path stroke="#8dcc28" d="M2063 399V386H2091V413H2063V399"/>
+    </g>
+  </g>
+</svg>
