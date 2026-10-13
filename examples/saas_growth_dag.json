@@ -1,0 +1,186 @@
+{
+  "nodes": [
+    {
+      "label": "Macro Environment",
+      "variables": [
+        "date",
+        "industry_growth_rate",
+        "competitor_ad_spend_index",
+        "seasonality_index"
+      ],
+      "system": "Data Warehouse",
+      "grain": "按月聚合"
+    },
+    {
+      "label": "Marketing Spend & Channel Mix",
+      "variables": [
+        "date",
+        "channel",
+        "campaign_id",
+        "impressions",
+        "spend",
+        "target_cpa"
+      ],
+      "system": "Ad Platform",
+      "grain": "按天聚合"
+    },
+    {
+      "label": "Traffic & Acquisition",
+      "variables": [
+        "session_id",
+        "user_id",
+        "landing_page",
+        "visit_timestamp",
+        "referrer_channel"
+      ],
+      "system": "Web/App Tracking",
+      "grain": "事件级"
+    },
+    {
+      "label": "Activation & Aha Moment",
+      "variables": [
+        "user_id",
+        "event_name",
+        "event_timestamp",
+        "feature_used",
+        "is_activated"
+      ],
+      "system": "Product Analytics",
+      "grain": "事件级"
+    },
+    {
+      "label": "Product Engagement",
+      "variables": [
+        "date",
+        "user_id",
+        "daily_active_sessions",
+        "time_spent_mins",
+        "core_actions_count"
+      ],
+      "system": "Product Analytics",
+      "grain": "按天聚合"
+    },
+    {
+      "label": "Sales Pipeline & Touchpoints",
+      "variables": [
+        "lead_id",
+        "user_id",
+        "stage",
+        "touchpoint_type",
+        "owner_id",
+        "update_timestamp"
+      ],
+      "system": "CRM",
+      "grain": "事件级"
+    },
+    {
+      "label": "Conversion & Transaction",
+      "variables": [
+        "order_id",
+        "user_id",
+        "amount",
+        "discount_rate",
+        "order_timestamp",
+        "is_paid"
+      ],
+      "system": "Billing System",
+      "grain": "事件级"
+    },
+    {
+      "label": "User Retention & Churn",
+      "variables": [
+        "date",
+        "user_id",
+        "is_retained",
+        "days_since_signup",
+        "churn_flag"
+      ],
+      "system": "Data Warehouse",
+      "grain": "按天聚合"
+    },
+    {
+      "label": "Customer Lifetime Value & Payback",
+      "variables": [
+        "cohort_month",
+        "cac",
+        "ltv",
+        "roas",
+        "payback_months"
+      ],
+      "system": "Data Warehouse",
+      "grain": "按月聚合"
+    }
+  ],
+  "edges": [
+    {
+      "src": "Macro Environment",
+      "dst": "Marketing Spend & Channel Mix",
+      "note": "竞品广告投放增加会抬高流量单价，迫使企业调整渠道预算分配以维持目标获客成本；旺季时这种竞争效应会被进一步放大。"
+    },
+    {
+      "src": "Macro Environment",
+      "dst": "Traffic & Acquisition",
+      "note": "行业整体增长率决定了市场自然流量的池子大小，正向拉动基础流量盘的规模。"
+    },
+    {
+      "src": "Marketing Spend & Channel Mix",
+      "dst": "Traffic & Acquisition",
+      "note": "曝光量驱动访问量，但呈现边际递减：随着单一渠道预算翻倍，受限于受众饱和，点击量的增量不到两倍。"
+    },
+    {
+      "src": "Traffic & Acquisition",
+      "dst": "Activation & Aha Moment",
+      "note": "流量来源的渠道质量直接决定用户到达后的激活概率，高意向渠道（如SEO/直接访问）更易触发核心功能的Aha时刻。"
+    },
+    {
+      "src": "Traffic & Acquisition",
+      "dst": "Sales Pipeline & Touchpoints",
+      "note": "高价值/企业级线索会从直接注册分流进入CRM系统，启动销售培育和管线推进流程。"
+    },
+    {
+      "src": "Activation & Aha Moment",
+      "dst": "Product Engagement",
+      "note": "完成激活标准的用户具有显著更高的基线活跃度，未激活用户的产品粘性通常极低。"
+    },
+    {
+      "src": "Activation & Aha Moment",
+      "dst": "Sales Pipeline & Touchpoints",
+      "note": "已完成核心功能体验的线索在销售跟进时，对产品价值的认知更深，赢单概率更高且推进阻力更小。"
+    },
+    {
+      "src": "Product Engagement",
+      "dst": "Conversion & Transaction",
+      "note": "用户在产品内的核心动作频次越高，对价值的认知越深，价格敏感度越低，向付费转化的概率随之非线性提升。"
+    },
+    {
+      "src": "Sales Pipeline & Touchpoints",
+      "dst": "Conversion & Transaction",
+      "note": "销售触点（如产品演示、折扣催单）对转化产生倒U型影响：适度触点促进成单，但过度频繁触达会引起反感导致转化率下降。"
+    },
+    {
+      "src": "Product Engagement",
+      "dst": "User Retention & Churn",
+      "note": "高频活跃直接降低流失概率，但留存收益递减：在生命周期早期将活跃度从1提升到5带来的留存增益，远大于后期从10提升到14的增益。"
+    },
+    {
+      "src": "Conversion & Transaction",
+      "dst": "User Retention & Churn",
+      "note": "支付行为产生的沉没成本在初期（前30天）提升留存，但若缺乏持续产品价值，付费用户的后续流失曲线会断崖式下坠。"
+    },
+    {
+      "src": "Conversion & Transaction",
+      "dst": "Customer Lifetime Value & Payback",
+      "note": "订单金额和转化数量直接构成当期营收，是计算LTV和ROAS的分子基础。"
+    },
+    {
+      "src": "Marketing Spend & Channel Mix",
+      "dst": "Customer Lifetime Value & Payback",
+      "note": "投放花费决定获客成本（CAC），若CAC上升幅度大于LTV增幅，会导致回本周期显著拉长。"
+    },
+    {
+      "src": "User Retention & Churn",
+      "dst": "Customer Lifetime Value & Payback",
+      "note": "留存率延长用户生命周期，使得同一用户贡献多次交易，呈指数级放大LTV，改善整体单位经济模型。"
+    }
+  ]
+}

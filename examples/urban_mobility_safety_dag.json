@@ -1,0 +1,173 @@
+{
+  "nodes": [
+    {
+      "label": "天气与环境",
+      "variables": [
+        "datetime",
+        "region_id",
+        "precip_mm",
+        "visibility_m",
+        "road_surface_condition"
+      ],
+      "system": "气象与环境监测系统",
+      "grain": "按小时聚合"
+    },
+    {
+      "label": "路网基础属性",
+      "variables": [
+        "road_segment_id",
+        "road_class",
+        "lane_count",
+        "speed_limit",
+        "maintenance_status"
+      ],
+      "system": "路网监控系统",
+      "grain": "维度表(SCD缓慢变化维)"
+    },
+    {
+      "label": "出行需求与OD",
+      "variables": [
+        "trip_id",
+        "user_id",
+        "origin_geo",
+        "destination_geo",
+        "request_time",
+        "trip_purpose"
+      ],
+      "system": "出行平台与导航App",
+      "grain": "事件级(行程级)"
+    },
+    {
+      "label": "运力调度",
+      "variables": [
+        "dispatch_id",
+        "assigned_vehicle_id",
+        "matching_time",
+        "route_recommendation",
+        "surge_multiplier"
+      ],
+      "system": "出行平台与导航App",
+      "grain": "事件级"
+    },
+    {
+      "label": "车辆轨迹与行为",
+      "variables": [
+        "trajectory_id",
+        "timestamp",
+        "gps_point",
+        "instant_speed",
+        "harsh_brake_flag",
+        "sharp_turn_flag"
+      ],
+      "system": "出行平台与导航App",
+      "grain": "事件级(秒级采样)"
+    },
+    {
+      "label": "路网拥堵状态",
+      "variables": [
+        "road_segment_id",
+        "hour",
+        "avg_speed",
+        "congestion_index",
+        "queue_length"
+      ],
+      "system": "路网监控系统",
+      "grain": "按小时聚合"
+    },
+    {
+      "label": "安全装备寄送",
+      "variables": [
+        "shipment_id",
+        "sender_id",
+        "receiver_id",
+        "delivery_address",
+        "gear_type",
+        "delivery_date"
+      ],
+      "system": "物流与寄件系统",
+      "grain": "事件级"
+    },
+    {
+      "label": "出行者防护水平",
+      "variables": [
+        "user_id",
+        "date",
+        "has_helmet",
+        "has_restraint",
+        "safety_kit_coverage_score"
+      ],
+      "system": "物流与寄件系统",
+      "grain": "按天聚合(按人)"
+    },
+    {
+      "label": "交通事故与伤亡",
+      "variables": [
+        "incident_id",
+        "incident_time",
+        "location",
+        "collision_type",
+        "injury_severity",
+        "fatality_flag"
+      ],
+      "system": "急救与事故记录系统",
+      "grain": "事件级"
+    }
+  ],
+  "edges": [
+    {
+      "src": "天气与环境",
+      "dst": "路网拥堵状态",
+      "note": "降雨量与能见度下降直接降低道路通行能力；当小时降雨量超过10mm时，拥堵指数呈非线性急剧上升。"
+    },
+    {
+      "src": "天气与环境",
+      "dst": "出行需求与OD",
+      "note": "恶劣天气初期会促使私人出行向网约车转移，但达到极端天气阈值时，整体出行需求会断崖式下降，呈倒U型。"
+    },
+    {
+      "src": "路网基础属性",
+      "dst": "路网拥堵状态",
+      "note": "车道数增加通常提升通行能力，但在交汇点处由于交织冲突增加，可能呈现边际通行效率递减甚至引发拥堵的瓶颈效应。"
+    },
+    {
+      "src": "出行需求与OD",
+      "dst": "运力调度",
+      "note": "特定OD对的请求集中度增加，触发平台动态调度算法，影响运力分配，存在5-10分钟的响应滞后。"
+    },
+    {
+      "src": "出行需求与OD",
+      "dst": "车辆轨迹与行为",
+      "note": "区域内出行需求激增导致路网密度上升，车辆间相互干扰加大，平均车速下降且急刹车事件频率上升。"
+    },
+    {
+      "src": "运力调度",
+      "dst": "路网拥堵状态",
+      "note": "平台调度将运力引导至高需求区，适度调度能疏散客流，但过度集中派单反而会导致局部区域车辆聚集，引发新的拥堵。"
+    },
+    {
+      "src": "车辆轨迹与行为",
+      "dst": "交通事故与伤亡",
+      "note": "瞬时速度和急刹车频率与事故发生概率正相关；车速超过限速值的20%时，碰撞致死率呈指数级增长。"
+    },
+    {
+      "src": "路网拥堵状态",
+      "dst": "交通事故与伤亡",
+      "note": "轻度至中度拥堵增加追尾事故概率，但重度拥堵下车速极低，导致重大伤亡事故发生率反而下降，呈倒U型关系。"
+    },
+    {
+      "src": "出行需求与OD",
+      "dst": "安全装备寄送",
+      "note": "家长感知到特定出行者的长途或高频出行轨迹特征后，触发安全防护装备的寄送行为，通常在行程发生后1-3天显现。"
+    },
+    {
+      "src": "安全装备寄送",
+      "dst": "出行者防护水平",
+      "note": "包裹签收后出行者获得防护装备，安全评分提升；但由于使用依从性限制，防护效果在签收7天后趋于饱和。"
+    },
+    {
+      "src": "出行者防护水平",
+      "dst": "交通事故与伤亡",
+      "note": "佩戴安全装备不能避免事故发生，但能显著吸收碰撞能量，降低重伤概率，防护效果随碰撞动能增加呈边际递减。"
+    }
+  ]
+}

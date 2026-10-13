@@ -1,0 +1,172 @@
+{
+  "nodes": [
+    {
+      "label": "补丁发布与内容更新",
+      "variables": [
+        "patch_version",
+        "release_timestamp",
+        "is_major_patch",
+        "download_size_mb"
+      ],
+      "system": "版本发布系统",
+      "grain": "事件级"
+    },
+    {
+      "label": "玩家并发需求",
+      "variables": [
+        "timestamp",
+        "datacenter",
+        "login_attempts_per_min",
+        "active_sessions"
+      ],
+      "system": "实时监控埋点",
+      "grain": "按分钟聚合"
+    },
+    {
+      "label": "服务器产能与扩容",
+      "variables": [
+        "datacenter",
+        "world_id",
+        "allocated_instances",
+        "max_capacity",
+        "auto_scale_status"
+      ],
+      "system": "服务器基础设施管理器",
+      "grain": "按分钟聚合"
+    },
+    {
+      "label": "登录队列与等待时长",
+      "variables": [
+        "timestamp",
+        "world_id",
+        "avg_wait_sec",
+        "queue_length"
+      ],
+      "system": "实时监控埋点",
+      "grain": "按分钟聚合"
+    },
+    {
+      "label": "服务器稳定性与崩溃率",
+      "variables": [
+        "world_id",
+        "crash_event_id",
+        "memory_usage_pct",
+        "downtime_minutes"
+      ],
+      "system": "服务器基础设施管理器",
+      "grain": "事件级"
+    },
+    {
+      "label": "紧急热修与维护",
+      "variables": [
+        "maintenance_id",
+        "world_id",
+        "start_time",
+        "end_time",
+        "patch_id"
+      ],
+      "system": "版本发布系统",
+      "grain": "事件级"
+    },
+    {
+      "label": "客户端连接成功率",
+      "variables": [
+        "timestamp",
+        "world_id",
+        "successful_logins",
+        "error_9000_count"
+      ],
+      "system": "实时监控埋点",
+      "grain": "按分钟聚合"
+    },
+    {
+      "label": "玩家工单与负面情绪",
+      "variables": [
+        "ticket_id",
+        "account_id",
+        "issue_category",
+        "sentiment_score"
+      ],
+      "system": "GM客服工单系统",
+      "grain": "事件级"
+    },
+    {
+      "label": "玩家流失与退订率",
+      "variables": [
+        "account_id",
+        "cancel_date",
+        "last_login_date",
+        "churn_flag"
+      ],
+      "system": "计费与订阅系统",
+      "grain": "事件级"
+    }
+  ],
+  "edges": [
+    {
+      "src": "补丁发布与内容更新",
+      "dst": "玩家并发需求",
+      "note": "重大版本更新(如新资料片)会导致玩家回流和并发量呈非线性脉冲式激增，通常在发布后24小时内达到峰值。"
+    },
+    {
+      "src": "玩家并发需求",
+      "dst": "登录队列与等待时长",
+      "note": "当并发量超过服务器承载阈值时，系统强制启用登录队列，等待时长随并发量超载比例呈指数级增长。"
+    },
+    {
+      "src": "玩家并发需求",
+      "dst": "服务器稳定性与崩溃率",
+      "note": "高并发导致服务器内存泄漏加剧，当在线人数突破物理内存上限时，触发崩溃的概率显著上升并伴随延迟加剧。"
+    },
+    {
+      "src": "服务器产能与扩容",
+      "dst": "登录队列与等待时长",
+      "note": "增加服务器实例分摊负载能直接缩短队列长度，但由于实例间数据同步存在瓶颈，扩容到一定数量后对队列的缓解呈边际递减。"
+    },
+    {
+      "src": "登录队列与等待时长",
+      "dst": "客户端连接成功率",
+      "note": "队列过长会导致玩家客户端断线重连，超过30分钟等待时间后，成功登录比例会断崖式下跌。"
+    },
+    {
+      "src": "服务器稳定性与崩溃率",
+      "dst": "客户端连接成功率",
+      "note": "服务器发生崩溃或重启期间，连接成功率直接归零，恢复后存在10-15分钟的拥塞恢复期。"
+    },
+    {
+      "src": "服务器稳定性与崩溃率",
+      "dst": "紧急热修与维护",
+      "note": "崩溃频率超过运维SLA阈值(如每小时3次)时，触发紧急热修流程，将服务器切换至维护模式。"
+    },
+    {
+      "src": "紧急热修与维护",
+      "dst": "服务器产能与扩容",
+      "note": "热修部署需要将实例重启并重新编译逻辑核心，导致维护期间可用产能直接削减50%-100%，通常持续30-60分钟。"
+    },
+    {
+      "src": "登录队列与等待时长",
+      "dst": "玩家工单与负面情绪",
+      "note": "等待时间超过15分钟会显著激发玩家负面情绪，工单提交量随等待时长呈倒U型分布(极长等待导致玩家直接下线而不提工单)。"
+    },
+    {
+      "src": "客户端连接成功率",
+      "dst": "玩家工单与负面情绪",
+      "note": "连接失败频发(成功率骤降)导致玩家无法进入游戏，大量报错反馈(如Error 9000)涌入客服系统，成功率与工单量呈显著负相关。"
+    },
+    {
+      "src": "登录队列与等待时长",
+      "dst": "玩家流失与退订率",
+      "note": "长期反复的排队等待会累积玩家挫败感，通常在经历连续一周的高峰期排队后，表现为订阅流失率的滞后上升。"
+    },
+    {
+      "src": "客户端连接成功率",
+      "dst": "玩家流失与退订率",
+      "note": "连续多次无法进入游戏会突破玩家容忍阈值，直接引发退订，且流失概率不受此前游戏时长影响。"
+    },
+    {
+      "src": "玩家工单与负面情绪",
+      "dst": "玩家流失与退订率",
+      "note": "未被及时安抚的高负面情绪玩家有较高概率转化为退订行为，情绪越极端转化越快。"
+    }
+  ]
+}

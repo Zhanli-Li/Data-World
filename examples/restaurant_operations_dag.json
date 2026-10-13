@@ -1,0 +1,168 @@
+{
+  "nodes": [
+    {
+      "label": "供应商绩效与采购",
+      "variables": [
+        "supplier_id",
+        "on_time_delivery_rate",
+        "ingredient_grade",
+        "purchase_order_lead_time_days"
+      ],
+      "system": "ERP采购模块",
+      "grain": "按供应商按月聚合"
+    },
+    {
+      "label": "食材到货与库存水平",
+      "variables": [
+        "ingredient_sku",
+        "stock_on_hand_qty",
+        "safety_stock_days",
+        "spoilage_rate",
+        "reorder_point"
+      ],
+      "system": "WMS仓储管理系统",
+      "grain": "按SKU按天聚合"
+    },
+    {
+      "label": "预订与客流需求",
+      "variables": [
+        "reservation_date",
+        "guest_count",
+        "day_of_week",
+        "seasonal_index",
+        "event_promotion"
+      ],
+      "system": "POS预订与收银系统",
+      "grain": "按天聚合"
+    },
+    {
+      "label": "厨房产能排程与班次",
+      "variables": [
+        "shift_id",
+        "station_assignment",
+        "prep_hours_scheduled",
+        "labor_hours",
+        "line_cook_count"
+      ],
+      "system": "HR排班系统",
+      "grain": "按天聚合"
+    },
+    {
+      "label": "备菜与半成品加工",
+      "variables": [
+        "prep_batch_id",
+        "yield_percentage",
+        "prep_duration_mins",
+        "waste_percentage",
+        "station_id"
+      ],
+      "system": "KDS厨房显示系统",
+      "grain": "按批次聚合"
+    },
+    {
+      "label": "菜单订单量与点单结构",
+      "variables": [
+        "order_id",
+        "item_id",
+        "order_time",
+        "quantity",
+        "table_id"
+      ],
+      "system": "POS预订与收银系统",
+      "grain": "事件级"
+    },
+    {
+      "label": "缺料与替代换菜",
+      "variables": [
+        "order_id",
+        "original_item_id",
+        "substitute_item_id",
+        "stockout_flag",
+        "substitution_reason"
+      ],
+      "system": "POS预订与收银系统",
+      "grain": "事件级"
+    },
+    {
+      "label": "烹饪出餐与履约时效",
+      "variables": [
+        "ticket_id",
+        "fire_time",
+        "plating_time",
+        "fulfillment_duration_mins",
+        "expeditor_check"
+      ],
+      "system": "KDS厨房显示系统",
+      "grain": "事件级"
+    },
+    {
+      "label": "菜品质量与缺陷反馈",
+      "variables": [
+        "dish_id",
+        "quality_score",
+        "remake_count",
+        "customer_complaint_flag",
+        "send_back_reason"
+      ],
+      "system": "客户体验反馈系统",
+      "grain": "事件级"
+    }
+  ],
+  "edges": [
+    {
+      "src": "供应商绩效与采购",
+      "dst": "食材到货与库存水平",
+      "note": "准时交付率低于80%时，安全库存需求呈指数上升；前置时间波动直接影响补货触发点。"
+    },
+    {
+      "src": "预订与客流需求",
+      "dst": "菜单订单量与点单结构",
+      "note": "客流直接决定订单量，但在周末/节假日呈现菜品结构向高客单价海鲜转移的调节效应。"
+    },
+    {
+      "src": "预订与客流需求",
+      "dst": "厨房产能排程与班次",
+      "note": "客流预测驱动排班，但存在滞后效应，通常提前7-14天显现为排班人力配置。"
+    },
+    {
+      "src": "食材到货与库存水平",
+      "dst": "缺料与替代换菜",
+      "note": "当库存低于安全水位时触发缺料替代，呈阶跃阈值效应。"
+    },
+    {
+      "src": "食材到货与库存水平",
+      "dst": "备菜与半成品加工",
+      "note": "新鲜食材库存增加提升备菜批次量，但受限于冷链保鲜期，超过48小时后可用性断崖式下降。"
+    },
+    {
+      "src": "厨房产能排程与班次",
+      "dst": "备菜与半成品加工",
+      "note": "人力增加提升备菜产出，但受限于厨房工位物理空间，呈倒U型边际效应（超过4人/工位后互相干扰）。"
+    },
+    {
+      "src": "菜单订单量与点单结构",
+      "dst": "烹饪出餐与履约时效",
+      "note": "并发订单量增加导致出餐时效延长，当单时段订单超过产能瓶颈（如120单/小时）时，履约时效呈非线性急剧恶化。"
+    },
+    {
+      "src": "备菜与半成品加工",
+      "dst": "烹饪出餐与履约时效",
+      "note": "高完成度的半成品加工能显著缩短烹饪出餐时长，但存在饱和点（当备菜量满足90%预期订单时，时效优化达到边际饱和）。"
+    },
+    {
+      "src": "缺料与替代换菜",
+      "dst": "烹饪出餐与履约时效",
+      "note": "临时缺料换菜会导致该单据处理中断，增加约5-10分钟的额外沟通与重新备料延迟。"
+    },
+    {
+      "src": "烹饪出餐与履约时效",
+      "dst": "菜品质量与缺陷反馈",
+      "note": "履约时效压力增加导致摆盘粗糙或火候控制不准，当时长超过该菜品标准工时的150%时，客诉率显著上升。"
+    },
+    {
+      "src": "备菜与半成品加工",
+      "dst": "菜品质量与缺陷反馈",
+      "note": "备菜阶段的解冻/腌制不规范会直接导致口感缺陷，且存在滞后性，往往在出餐后2-3天才累积为线上差评。"
+    }
+  ]
+}
