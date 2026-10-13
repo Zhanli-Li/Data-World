@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "data-world-gen"
+version = "0.1.0"
+description = "DAG-driven synthetic data-world compiler"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["openai>=1.0"]
+
+[project.scripts]
+data-world = "data_world.cli:main"
+data-world-gen = "data_world.cli:main"
+dag-factory = "dag_factory.cli:main"
+data-world-task = "task.cli:main"
+
+[tool.setuptools]
+packages = ["data_world", "dag_factory", "task", "task.export", "task.synth"]

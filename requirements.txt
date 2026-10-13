@@ -1,0 +1,14 @@
+# Python 运行时依赖（等价于 pyproject.toml 的 [project].dependencies）
+#   pip install -r requirements.txt
+openai>=1.0
+
+# --- 以下为外部运行时工具，非 pip 包，需通过 npm 单独安装 ---
+# 前置条件：Node.js 18+ 和 npm；CCR 3.x 建议使用 Node.js 22+。
+#
+# Claude Code CLI（必需）：layer / projection / audit 阶段调用，安装后须在 PATH 上。
+#   npm install -g @anthropic-ai/claude-code
+#   claude --version
+#
+# claude-code-router（可选）：仅 --log-trajectories 采集 SDK 轨迹时需要。
+#   npm install -g @musistudio/claude-code-router@3.0.20
+#   ccr --help

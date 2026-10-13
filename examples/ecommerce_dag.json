@@ -1,0 +1,231 @@
+{
+  "name": "ecommerce_support_reputation",
+  "description": "电商平台从营销投放、下单、商品质量、客服工单、退款申诉、口碑评价到复购的因果 DAG；多个观测系统产出自然语言文本记录（工单正文、坐席备注、评价正文、申诉理由）",
+  "nodes": [
+    {
+      "label": "marketing_campaign",
+      "description": "各渠道每日营销投放活动与力度",
+      "system": "广告投放平台",
+      "grain": "channel-day",
+      "variables": [
+        "channel",
+        "spend_amount",
+        "impressions",
+        "promo_discount_rate",
+        "campaign_theme"
+      ]
+    },
+    {
+      "label": "customer_profile",
+      "description": "顾客相对稳定的基础画像与价值分层",
+      "system": "会员账户系统",
+      "grain": "customer",
+      "variables": [
+        "region",
+        "age_band",
+        "acquisition_channel",
+        "member_tier",
+        "price_sensitivity"
+      ]
+    },
+    {
+      "label": "product_catalog",
+      "description": "在售商品的静态属性与定价",
+      "system": "商品主数据系统",
+      "grain": "product",
+      "variables": [
+        "category",
+        "brand_tier",
+        "list_price",
+        "supplier_region",
+        "launch_recency_days"
+      ]
+    },
+    {
+      "label": "order",
+      "description": "顾客下单的交易事实",
+      "system": "交易订单系统",
+      "grain": "order",
+      "variables": [
+        "customer_id",
+        "product_id",
+        "order_date",
+        "quantity",
+        "paid_amount",
+        "applied_discount_rate",
+        "channel"
+      ]
+    },
+    {
+      "label": "product_quality_issue",
+      "description": "商品在履约与使用中暴露出的质量与履约问题",
+      "system": "履约与质检系统",
+      "grain": "order",
+      "variables": [
+        "defect_flag",
+        "defect_type",
+        "delivery_delay_days",
+        "severity"
+      ]
+    },
+    {
+      "label": "support_ticket",
+      "description": "顾客就订单发起的客服工单，含顾客自由文本描述与坐席处理备注",
+      "system": "客服工单系统",
+      "grain": "ticket",
+      "variables": [
+        "order_id",
+        "customer_id",
+        "created_at",
+        "issue_category",
+        "ticket_text",
+        "agent_note",
+        "handling_minutes",
+        "resolved_flag"
+      ]
+    },
+    {
+      "label": "refund_request",
+      "description": "由工单升级而来的退款/退货申诉，含顾客申诉理由文本与审核结论",
+      "system": "售后申诉系统",
+      "grain": "refund_case",
+      "variables": [
+        "ticket_id",
+        "order_id",
+        "reason_text",
+        "requested_amount",
+        "approved_flag",
+        "review_comment"
+      ]
+    },
+    {
+      "label": "product_review",
+      "description": "顾客对商品发表的公开评价，含标题、评论正文与评分",
+      "system": "商品评价系统",
+      "grain": "review",
+      "variables": [
+        "product_id",
+        "customer_id",
+        "order_id",
+        "rating",
+        "review_title",
+        "review_text",
+        "helpful_votes"
+      ]
+    },
+    {
+      "label": "csat",
+      "description": "工单结束后回收的顾客满意度评分",
+      "system": "满意度回访系统",
+      "grain": "ticket",
+      "variables": [
+        "ticket_id",
+        "csat_score",
+        "survey_channel"
+      ]
+    },
+    {
+      "label": "repeat_purchase",
+      "description": "顾客在后续窗口内的复购与留存结果",
+      "system": "用户增长分析系统",
+      "grain": "customer",
+      "variables": [
+        "repeat_order_count",
+        "days_to_next_order",
+        "churned_flag"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "src": "marketing_campaign",
+      "dst": "order",
+      "sign": "+",
+      "note": "投放力度与促销折扣提升下单量，但高折扣会吸引价格敏感、后续价值较低的顾客"
+    },
+    {
+      "src": "customer_profile",
+      "dst": "order",
+      "sign": "+",
+      "note": "高会员层级顾客下单更频繁、客单更高，异质性明显"
+    },
+    {
+      "src": "product_catalog",
+      "dst": "order",
+      "sign": "+",
+      "note": "品牌层级与定价影响转化，新品上架期存在时间效应"
+    },
+    {
+      "src": "product_catalog",
+      "dst": "product_quality_issue",
+      "sign": "+",
+      "note": "低品牌层级、特定供应地区商品的缺陷率与履约延迟更高"
+    },
+    {
+      "src": "order",
+      "dst": "product_quality_issue",
+      "sign": "+",
+      "note": "订单量与配送时段决定暴露的质量/履约问题数量"
+    },
+    {
+      "src": "order",
+      "dst": "support_ticket",
+      "sign": "+",
+      "note": "订单是工单的前置事实；工单文本中会引用商品与下单情境"
+    },
+    {
+      "src": "product_quality_issue",
+      "dst": "support_ticket",
+      "sign": "+",
+      "note": "缺陷与延迟显著提高开单概率，且决定工单文本的主题与情绪强度"
+    },
+    {
+      "src": "support_ticket",
+      "dst": "refund_request",
+      "sign": "+",
+      "note": "严重或未解决的工单升级为退款申诉；申诉理由文本承接工单语义"
+    },
+    {
+      "src": "product_quality_issue",
+      "dst": "refund_request",
+      "sign": "+",
+      "note": "质量问题越严重，退款金额与获批概率越高"
+    },
+    {
+      "src": "support_ticket",
+      "dst": "csat",
+      "sign": "-",
+      "note": "处理时长越长、未解决的工单拉低满意度评分"
+    },
+    {
+      "src": "product_quality_issue",
+      "dst": "product_review",
+      "sign": "-",
+      "note": "质量问题拉低评分并使评论正文出现负面主题词"
+    },
+    {
+      "src": "customer_profile",
+      "dst": "product_review",
+      "sign": "+",
+      "note": "不同客群的打分基线与表达风格存在系统性差异（评分/文本异质性）"
+    },
+    {
+      "src": "product_review",
+      "dst": "repeat_purchase",
+      "sign": "+",
+      "note": "自身好评与高评分对应更强的复购意愿"
+    },
+    {
+      "src": "csat",
+      "dst": "repeat_purchase",
+      "sign": "+",
+      "note": "满意度越高复购越多、流失越少"
+    },
+    {
+      "src": "refund_request",
+      "dst": "repeat_purchase",
+      "sign": "-",
+      "note": "经历退款申诉的顾客复购下降、流失上升，但成功快速退款可部分缓解"
+    }
+  ]
+}

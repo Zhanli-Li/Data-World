@@ -1,0 +1,56 @@
+# 机密配置（含 token）——绝不入库
+.env
+.env.*
+!.env.example
+.npmrc
+.pypirc
+*.pem
+*.key
+
+# Python 缓存与构建产物
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.pytest_cache/
+.hypothesis/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+build/
+dist/
+/.venv/
+/venv/
+
+# 本地运行状态
+/.state/
+/.claude/
+/.claude-code-router/
+
+# 本地输入数据（persona 等，不随仓库分发）
+/data/
+
+# 生成的数据世界与评测产物
+/outputs/
+/tasks/
+/benchmark/
+
+# 导出的 harbor 任务目录里带 judge 活 token，绝不入库
+judge.env
+
+# DAG 批量生成目录可随时重建
+/dags/
+
+# 补丁/编辑器残留
+*.orig
+*.rej
+*~
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store

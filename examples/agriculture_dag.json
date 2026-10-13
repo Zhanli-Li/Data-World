@@ -1,0 +1,121 @@
+{
+  "name": "regional_agriculture_supply_chain",
+  "description": "区域气候、农业生产、市场供给与价格传导的因果 DAG",
+  "nodes": [
+    {
+      "label": "weather_conditions",
+      "description": "地区每日天气和季节性气候条件",
+      "system": "气象站观测系统",
+      "grain": "region-day",
+      "variables": [
+        "temperature_c",
+        "rainfall_mm",
+        "sunshine_hours",
+        "heat_stress_days"
+      ]
+    },
+    {
+      "label": "farm_characteristics",
+      "description": "农场相对稳定的基础属性和生产能力",
+      "system": "农业主体登记系统",
+      "grain": "farm",
+      "variables": [
+        "region_id",
+        "farm_size_mu",
+        "crop_type",
+        "soil_quality",
+        "management_level"
+      ]
+    },
+    {
+      "label": "pest_pressure",
+      "description": "气候和农场管理共同作用下的病虫害压力",
+      "system": "农技巡查系统",
+      "grain": "farm-season",
+      "variables": [
+        "pest_incidence_rate",
+        "severity_index",
+        "affected_area_mu"
+      ]
+    },
+    {
+      "label": "crop_yield",
+      "description": "农场每个生产季的实际种植和收获结果",
+      "system": "农业生产上报系统",
+      "grain": "farm-season",
+      "variables": [
+        "planted_area_mu",
+        "harvest_area_mu",
+        "yield_kg_per_mu",
+        "total_output_kg"
+      ]
+    },
+    {
+      "label": "market_supply",
+      "description": "区域市场每日可交易农产品供给",
+      "system": "批发市场入场登记系统",
+      "grain": "market-product-day",
+      "variables": [
+        "inbound_quantity_kg",
+        "available_inventory_kg",
+        "supplier_count"
+      ]
+    },
+    {
+      "label": "market_price",
+      "description": "区域批发市场形成的农产品成交价格",
+      "system": "市场交易系统",
+      "grain": "market-product-day",
+      "variables": [
+        "average_price_per_kg",
+        "minimum_price_per_kg",
+        "maximum_price_per_kg",
+        "transaction_volume_kg"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "src": "weather_conditions",
+      "dst": "pest_pressure",
+      "sign": "+",
+      "note": "持续高温高湿通常提高病虫害发生率，但影响程度因作物类型而异"
+    },
+    {
+      "src": "farm_characteristics",
+      "dst": "pest_pressure",
+      "sign": "-",
+      "note": "更高的管理水平和更好的田间条件通常降低病虫害压力"
+    },
+    {
+      "src": "weather_conditions",
+      "dst": "crop_yield",
+      "sign": "+",
+      "note": "适宜温度、降雨和日照提高产量；极端天气应通过非线性惩罚机制体现"
+    },
+    {
+      "src": "farm_characteristics",
+      "dst": "crop_yield",
+      "sign": "+",
+      "note": "土壤质量、管理能力和农场规模共同影响单位面积产量与总产量"
+    },
+    {
+      "src": "pest_pressure",
+      "dst": "crop_yield",
+      "sign": "-",
+      "note": "病虫害压力提高会降低收获面积和单位面积产量"
+    },
+    {
+      "src": "crop_yield",
+      "dst": "market_supply",
+      "sign": "+",
+      "note": "农场产量增加通常提高后续进入区域市场的可交易供给"
+    },
+    {
+      "src": "market_supply",
+      "dst": "market_price",
+      "sign": "-",
+      "note": "在其他条件相近时，市场供给增加通常压低成交价格"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+* text=auto eol=lf
+
+*.npy binary
+*.parquet binary
+*.pdf binary
+*.png binary
+*.sqlite binary
+*.sqlite3 binary
