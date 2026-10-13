@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Data World: Scaling Data Environments from Scratch. A mechanism-first engine for generating data environments, analytical tasks, and grounded rubrics.">
+  <meta name="theme-color" content="#f8faf8">
+  <title>Data World — Scaling Data Environments from Scratch</title>
+  <link rel="icon" type="image/png" href="assets/data-world-logo.png">
+  <style>
+    :root { --ink:#18332e; --body:#42564f; --muted:#677b73; --green:#296959; --blue:#39659b; --line:#dfe8e1; --paper:#f8faf8; --soft:#eef4ef; --white:#fff; --radius:22px; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:90px; }
+    body { margin:0; background:var(--paper); color:var(--body); font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+    a { color:var(--green); text-underline-offset:4px; }
+    button,a { -webkit-tap-highlight-color:transparent; }
+    button { font:inherit; }
+    button:not(:disabled),summary { cursor:pointer; }
+    :focus-visible { outline:3px solid var(--blue); outline-offset:5px; }
+    img { display:block; max-width:100%; height:auto; }
+    h1,h2,h3,p,figure { margin:0; }
+    h1,h2,h3 { color:var(--ink); }
+    h1 { font-size:clamp(38px,5.5vw,66px); line-height:1.1; letter-spacing:-2.8px; font-weight:650; }
+    h2 { font-size:clamp(30px,3.8vw,43px); line-height:1.17; letter-spacing:-1.5px; font-weight:630; }
+    h3 { font-size:19px; line-height:1.4; letter-spacing:-.4px; }
+    .wrap { width:min(1120px,calc(100% - 48px)); margin-inline:auto; }
+    .skip { position:fixed; z-index:100; top:12px; left:16px; padding:8px 16px; background:white; transform:translateY(-160%); }
+    .skip:focus { transform:none; }
+    .header { position:sticky; top:0; z-index:20; height:70px; border-bottom:1px solid rgba(223,232,225,.8); background:rgba(248,250,248,.94); backdrop-filter:blur(14px); }
+    .header-inner { height:100%; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+    .brand { display:flex; align-items:center; flex:none; text-decoration:none; }
+    .brand .longcat-logo { width:172px; height:auto; }
+    nav { display:flex; align-items:center; gap:25px; }
+    nav a { text-decoration:none; font-size:13px; color:var(--muted); font-weight:550; }
+    nav a:hover { color:var(--green); }
+    nav .nav-code { color:var(--ink); border:1px solid var(--line); padding:5px 12px; border-radius:8px; }
+    .hero { position:relative; overflow:hidden; text-align:center; padding:49px 0 0; }
+    .hero::before { content:""; position:absolute; inset:0; z-index:-1; background:radial-gradient(ellipse at 21% 23%,#eaf3ed 0,transparent 47%),radial-gradient(ellipse at 85% 16%,#edf2fa 0,transparent 42%); }
+    .eyebrow { display:flex; align-items:center; justify-content:center; gap:9px; color:var(--green); font-size:11px; font-weight:650; letter-spacing:2px; text-transform:uppercase; }
+    .eyebrow::before { content:""; width:6px; height:6px; border-radius:50%; background:#67967e; }
+    .hero-logo { width:154px; margin:20px auto 16px; mix-blend-mode:multiply; }
+    .hero h1 { max-width:830px; margin:auto; }
+    .hero h1 span { display:block; color:var(--green); }
+    .hero-sub { max-width:640px; margin:22px auto 0; font-size:17px; line-height:1.75; color:var(--muted); }
+    .authors { max-width:880px; margin:29px auto 0; font-size:13px; line-height:2.05; color:var(--body); }
+    .authors span { display:inline-block; margin:0 5px; }
+    sup { font-size:9px; color:var(--muted); margin-left:2px; }
+    .affiliation-summary { margin:9px auto 0; font-size:12px; color:var(--muted); }
+    .affiliations { max-width:780px; margin:10px auto 0; font-size:12px; text-align:left; }
+    .affiliations summary { width:fit-content; margin:auto; color:var(--green); }
+    .affiliations .affiliation-list { display:grid; grid-template-columns:1fr 1fr; gap:3px 20px; padding:16px 20px; background:rgba(255,255,255,.65); border:1px solid var(--line); border-radius:12px; margin-top:10px; }
+    .author-note { grid-column:1/-1; border-top:1px solid var(--line); margin-top:8px; padding-top:8px; }
+    .actions { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:25px auto 0; }
+    .button { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:9px 20px; border:1px solid var(--line); border-radius:10px; color:var(--ink); background:var(--white); text-decoration:none; font-size:13px; font-weight:600; transition:transform .2s,box-shadow .2s; }
+    .button:hover { transform:translateY(-2px); box-shadow:0 5px 15px #18332e0b; }
+    .button.primary { background:var(--ink); color:white; border-color:var(--ink); }
+    .button.pending { background:transparent; color:var(--muted); cursor:default; }
+    .button.pending small { font-size:9px; font-weight:500; padding:1px 5px; background:#e9eeea; border-radius:4px; }
+    .platform-logo { width:20px; height:20px; object-fit:contain; flex:none; }
+    .button.primary .platform-logo { filter:invert(1); }
+    .platform-logo.arxiv { filter:invert(26%) sepia(67%) saturate(1267%) hue-rotate(331deg) brightness(82%) contrast(91%); }
+    @media (max-width:650px) { .brand .longcat-logo { width:140px; } }
+    @media (max-width:400px) { nav a[href="#resources"] { display:none; } }
+    .icon { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+    .release-note { margin:12px 0 0; color:var(--muted); font-size:11px; }
+    section { padding:86px 0; }
+    .section-head { display:flex; justify-content:space-between; align-items:flex-end; gap:30px; margin-bottom:32px; }
+    .section-number { color:var(--green); font-size:11px; font-weight:650; letter-spacing:1.7px; text-transform:uppercase; margin-bottom:12px; }
+    .section-intro { max-width:425px; color:var(--muted); font-size:14px; line-height:1.8; }
+    .intro-grid { display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:center; }
+    .intro-text p { margin-top:20px; font-size:15px; }
+    .intro-text strong { color:var(--ink); }
+    .quote { margin-top:27px; border-left:2px solid #83ac93; padding-left:18px; color:var(--green); font-size:20px; line-height:1.5; letter-spacing:-.5px; }
+    .world-card { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:26px; box-shadow:0 16px 55px #18332e06; }
+    .card-top { display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--muted); padding-bottom:18px; border-bottom:1px solid var(--line); }
+    .card-top span:last-child { color:var(--green); background:var(--soft); padding:2px 8px; border-radius:5px; }
+    .world-path { margin-top:20px; display:flex; align-items:center; gap:8px; }
+    .node { background:#f1f5f0; border:1px solid #dde7dd; border-radius:10px; padding:9px 4px; text-align:center; font-size:11px; flex:1; color:var(--ink); }
+    .node.blue { background:#edf3fa; border-color:#d9e3f2; }
+    .arrow { font-size:16px; color:#90a598; }
+    .file-list { margin:23px 0; padding:15px 18px; background:#f7f9f7; border-radius:10px; font:12px/2 ui-monospace,SFMono-Regular,Consolas,monospace; color:var(--muted); }
+    .file-list span { display:block; }
+    .file-list b { color:var(--green); font-weight:500; }
+    .question { border-top:1px solid var(--line); padding-top:16px; font-size:14px; color:var(--ink); line-height:1.7; }
+    .question small { display:block; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
+    .illustrative { font-size:10px; color:var(--muted); margin-top:12px; }
+    .band { background:#eef3ef; border-block:1px solid var(--line); }
+    .figure-frame { background:white; padding:25px; border:1px solid var(--line); border-radius:var(--radius); }
+    .figure-button { display:block; width:100%; padding:0; border:0; background:white; cursor:zoom-in !important; border-radius:8px; }
+    .figure-caption { display:flex; justify-content:space-between; gap:20px; margin-top:18px; font-size:11px; color:var(--muted); }
+    .figure-caption span:last-child { white-space:nowrap; color:var(--green); }
+    .steps { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; margin-top:30px; }
+    .step-num { font:11px ui-monospace,SFMono-Regular,Consolas,monospace; color:var(--green); display:block; margin-bottom:10px; }
+    .steps h3 { font-size:15px; }
+    .steps p { margin-top:8px; font-size:12px; color:var(--muted); line-height:1.8; }
+    .benchmark-grid { display:grid; grid-template-columns:1.05fr 1fr; gap:25px; }
+    .benchmark-card { border:1px solid var(--line); border-radius:var(--radius); padding:28px; background:white; }
+    .benchmark-card header { display:flex; justify-content:space-between; align-items:center; gap:15px; }
+    .tag { font-size:10px; color:var(--green); padding:4px 8px; border:1px solid #d9e6da; background:var(--soft); border-radius:6px; white-space:nowrap; }
+    .benchmark-card p { font-size:13px; color:var(--muted); margin-top:15px; }
+    .split-metrics { display:flex; gap:30px; margin:26px 0; }
+    .split-metrics strong { font-size:30px; font-weight:600; color:var(--ink); letter-spacing:-1px; display:block; line-height:1.2; }
+    .split-metrics span { display:block; font-size:11px; color:var(--muted); margin-top:4px; }
+    .domain-tags { display:flex; flex-wrap:wrap; gap:7px; border-top:1px solid var(--line); padding-top:17px; }
+    .domain-tags span { font-size:10px; padding:4px 8px; background:#f4f7f4; border-radius:5px; color:var(--muted); }
+    .rubric-row { margin-top:18px; padding:15px 0; border-top:1px solid var(--line); }
+    .rubric-row strong { color:var(--ink); font-size:13px; }
+    .rubric-row p { margin-top:5px; font-size:12px; }
+    .protocol { margin-top:24px; font-size:11px; color:var(--muted); }
+    .benchmark-chart { margin-top:0; margin-bottom:28px; padding:26px; border:1px solid var(--line); border-radius:var(--radius); background:white; }
+    .chart-header { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; }
+    .chart-header p { margin-top:5px; color:var(--muted); font-size:12px; }
+    .chart-sort { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--muted); flex:none; }
+    .chart-sort select { max-width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--paper); color:var(--ink); font:inherit; }
+    .chart-legend { --bar-color:#8996a3; display:flex; flex-wrap:wrap; gap:18px; margin:22px 0 12px; font-size:11px; color:var(--body); }
+    .chart-legend span { display:inline-flex; align-items:center; gap:7px; }
+    .chart-legend i { display:inline-block; width:14px; height:14px; border-radius:3px; background-color:var(--bar-color); background-image:var(--bar-texture); }
+    .score-computation { --bar-texture:linear-gradient(#ffffff59,#ffffff59); }
+    .score-insight { --bar-texture:repeating-linear-gradient(135deg,#ffffff9e 0 2px,transparent 2px 6px); }
+    .score-average { --bar-texture:none; }
+    .model-color-legend { display:flex; flex-wrap:wrap; gap:10px 18px; margin-bottom:24px; font-size:10px; color:var(--muted); }
+    .model-color-legend > span { display:inline-flex; align-items:center; gap:6px; }
+    .model-color-legend i { width:9px; height:9px; border-radius:3px; background:var(--model-color); flex:none; }
+    .model-color-legend .model-logo { width:16px; height:16px; }
+    .chart-layout { display:grid; grid-template-columns:28px minmax(0,1fr); gap:8px; }
+    .chart-axis { position:relative; height:310px; color:var(--muted); font:10px ui-monospace,SFMono-Regular,Consolas,monospace; }
+    .chart-axis span { position:absolute; right:0; transform:translateY(50%); }
+    .chart-axis span:first-child { transform:translateY(0); }
+    .chart-scroll,.table-scroll { min-width:0; overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:thin; scrollbar-color:#b0c7b7 #f4f7f4; }
+    .chart-plot { position:relative; display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); min-width:1000px; padding-top:12px; }
+    .chart-grid { position:absolute; inset:12px 0 auto; height:310px; pointer-events:none; }
+    .chart-grid i { position:absolute; width:100%; border-top:1px dashed var(--line); }
+    .chart-grid i:last-child { border-top-style:solid; border-color:#a7baae; }
+    .model-group { --bar-color:var(--model-color,#8996a3); position:relative; min-width:0; padding:0 5px; }
+    .model-bars { display:flex; gap:5px; align-items:flex-end; justify-content:center; height:310px; }
+    .score-bar { position:relative; width:26px; flex:none; height:calc(var(--score) * 1%); min-height:1px; border:0; border-radius:4px 4px 0 0; background-color:var(--bar-color); background-image:var(--bar-texture); padding:0; transition:filter .15s; }
+    .score-bar:hover,.score-bar:focus-visible { filter:brightness(.85); }
+    .score-bar span { position:absolute; top:-18px; left:50%; transform:translateX(-50%); font:9px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace; color:var(--body); white-space:nowrap; }
+    .score-average span { color:var(--ink); font-weight:700; }
+    .model-label { display:flex; flex-direction:column; align-items:center; gap:8px; margin:15px 0 12px; color:var(--ink); font-size:10px; line-height:1.45; text-align:center; overflow-wrap:anywhere; }
+    .model-logo { width:25px; height:25px; object-fit:contain; flex:none; }
+    .chart-axis { margin-top:12px; }
+    .chart-detail { margin-top:18px; padding:12px 15px; background:var(--soft); border-radius:9px; color:var(--ink); font-size:12px; min-height:46px; }
+    .chart-caption { margin-top:14px; color:var(--muted); font-size:11px; line-height:1.8; }
+    .chart-callout { margin-top:14px; color:var(--green); font-size:12px; }
+    .results-table { margin-top:22px; border-top:1px solid var(--line); padding-top:16px; }
+    .results-table summary { font-size:12px; color:var(--green); width:fit-content; }
+    .table-scroll { margin-top:14px; }
+    .results-table table { width:100%; min-width:1020px; border-collapse:collapse; font-size:11px; font-variant-numeric:tabular-nums; }
+    .results-table caption { text-align:left; font-size:11px; color:var(--muted); padding-bottom:12px; }
+    .results-table th,.results-table td { text-align:right; padding:11px 9px; border-bottom:1px solid var(--line); white-space:nowrap; }
+    .results-table thead th { color:var(--muted); font-weight:550; background:var(--paper); }
+    .results-table thead tr:first-child th { text-align:center; }
+    .results-table tbody th { color:var(--ink); text-align:left; font-weight:500; }
+    .table-model { display:flex; align-items:center; gap:9px; }
+    .table-model .model-logo { width:20px; height:20px; }
+    .results-table td small { color:var(--muted); font-size:10px; margin-left:3px; }
+    .results-table u { text-underline-offset:3px; }
+    .results-table tbody tr:hover { background:var(--paper); }
+    @media (max-width:650px) { .benchmark-chart { padding:18px 12px; } .chart-header { flex-direction:column; gap:13px; } .chart-legend { gap:10px 15px; font-size:10px; } .chart-detail { font-size:11px; } .chart-caption { font-size:10px; } }
+    .results { padding-top:0; }
+    .results-panel { background:#18332e; color:#d8e5dd; border-radius:var(--radius); padding:38px; display:grid; grid-template-columns:1fr 1.1fr; gap:46px; align-items:center; }
+    .results-panel h2 { color:#fff; font-size:32px; }
+    .results-panel .section-number { color:#a4c9ae; }
+    .results-panel p { margin-top:17px; font-size:13px; color:#b2c7bc; }
+    .gain-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+    .gain { background:#ffffff06; border:1px solid #ffffff18; padding:18px; border-radius:12px; }
+    .gain strong { color:#d3e9d8; font-size:29px; font-weight:550; display:block; line-height:1.2; letter-spacing:-.6px; }
+    .gain span { display:block; color:#c1d6c9; font-size:11px; margin-top:7px; }
+    .result-note { font-size:11px; color:var(--muted); margin-top:15px; }
+    .training-block { margin-top:30px; padding:28px; background:white; border:1px solid var(--line); border-radius:var(--radius); }
+    .training-block > header { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; margin-bottom:24px; }
+    .training-block > header p { font-size:12px; color:var(--muted); margin-top:7px; max-width:690px; }
+    .training-comparisons { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
+    .training-card { padding:22px; border:1px solid var(--line); border-radius:15px; background:var(--paper); min-width:0; }
+    .training-card header { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
+    .training-card h3 { font-size:16px; }
+    .training-gain { color:var(--green); background:#e5efe6; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:650; white-space:nowrap; }
+    .training-scope { font-size:10px; color:var(--muted); margin-bottom:20px; }
+    .training-row { display:grid; grid-template-columns:76px minmax(0,1fr) 40px; align-items:center; gap:10px; margin:14px 0; font-size:11px; }
+    .training-row > span:first-child { color:var(--muted); }
+    .training-track { position:relative; height:12px; background:#e5ebe5; border-radius:3px; overflow:hidden; }
+    .training-fill { display:block; height:100%; width:calc(var(--score) * 1%); border-radius:3px; background:#92a9bf; }
+    .training-row.base .training-fill { background:#b3beb4; }
+    .training-row.ours .training-fill { background:var(--green); }
+    .training-row.ours > span { color:var(--green); font-weight:650; }
+    .training-value { text-align:right; font-variant-numeric:tabular-nums; color:var(--ink); }
+    .training-scale { display:flex; justify-content:space-between; margin:18px 50px 0 86px; color:var(--muted); font:9px ui-monospace,SFMono-Regular,Consolas,monospace; }
+    .training-endpoints { border-top:1px solid var(--line); padding-top:13px; margin-top:16px; font-size:11px; color:var(--muted); }
+    .training-table table { min-width:1540px; }
+    .training-table .training-highlight { background:#eef5ef; }
+    .training-delta { color:var(--green); font-size:9px; margin-left:4px; }
+    .training-delta.negative { color:#ad4848; }
+    .training-caption { color:var(--muted); font-size:11px; margin-top:18px; }
+    .progress-image { width:100%; border-radius:10px; }
+    .training-chart-hint { font-size:11px; color:var(--green); margin-top:15px; }
+    @media (max-width:650px) { .training-block { padding:20px 14px; } .training-block > header { flex-direction:column; gap:10px; } .training-comparisons { grid-template-columns:1fr; } .training-card { padding:16px; } .training-row { grid-template-columns:64px minmax(0,1fr) 37px; gap:7px; font-size:10px; } .training-scale { margin-left:71px; margin-right:44px; } }
+    .resource-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    .resource { display:flex; flex-direction:column; border:1px solid var(--line); border-radius:16px; padding:24px; background:white; color:var(--body); text-decoration:none; transition:border-color .2s,transform .2s; }
+    a.resource:hover { border-color:#90ad9c; transform:translateY(-3px); }
+    .resource-type { display:flex; align-items:center; justify-content:space-between; font-size:10px; letter-spacing:1.3px; color:var(--green); text-transform:uppercase; margin-bottom:22px; }
+    .resource h3 { font-size:17px; }
+    .resource p { font-size:12px; margin-top:8px; color:var(--muted); flex:1; }
+    .resource-status { font-size:11px; margin-top:20px; color:var(--green); }
+    .resource.pending { background:#f4f7f4; }
+    .resource.pending .resource-status { color:var(--muted); }
+    .contact { margin-top:28px; font-size:12px; color:var(--muted); text-align:center; }
+    footer { border-top:1px solid var(--line); padding:25px 0 32px; }
+    .footer-inner { display:flex; align-items:center; justify-content:space-between; gap:20px; font-size:11px; color:var(--muted); }
+    .footer-inner a { text-decoration:none; }
+    dialog { width:min(1320px,96vw); max-height:94vh; border:1px solid var(--line); border-radius:18px; padding:20px; overflow:auto; background:white; color:var(--ink); }
+    dialog::backdrop { background:#0a211bbd; backdrop-filter:blur(5px); }
+    .dialog-top { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-bottom:16px; }
+    .dialog-top p { font-size:14px; }
+    .dialog-close { background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:5px 13px; font-size:12px; }
+    @media (max-width:850px) { .intro-grid { gap:32px; } .section-head { align-items:flex-start; flex-direction:column; gap:16px; } .section-intro { max-width:650px; } .results-panel { gap:26px; padding:28px; } nav { gap:16px; } }
+    @media (max-width:650px) {
+      .wrap { width:calc(100% - 36px); } .header { height:60px; } .header-inner { gap:14px; } nav { gap:13px; } nav a { font-size:12px; } nav .hide-mobile { display:none; } nav .nav-code { padding:4px 8px; }
+      .hero { padding-top:31px; } .hero-logo { width:128px; margin:18px auto; } h1 { letter-spacing:-1.7px; } .hero-sub { font-size:15px; } .authors { margin-top:23px; font-size:11px; } .authors span { margin:0 3px; }
+      .affiliations .affiliation-list { grid-template-columns:1fr; } .button { padding:8px 13px; font-size:12px; } .actions { gap:8px; }
+      section { padding:57px 0; } .intro-grid,.benchmark-grid,.results-panel { grid-template-columns:1fr; } .intro-grid { gap:28px; } .intro-text p { font-size:14px; } .quote { font-size:18px; } .world-card { padding:20px; }
+      .figure-frame { padding:12px; border-radius:14px; } .figure-caption { font-size:10px; gap:10px; } .steps { grid-template-columns:1fr 1fr; gap:24px 19px; } .benchmark-card { padding:22px; } .benchmark-card header { flex-wrap:wrap; } .split-metrics { gap:24px; }
+      .results { padding-top:0; } .results-panel { padding:25px; } .results-panel h2 { font-size:29px; } .gain { padding:15px; } .gain strong { font-size:27px; } .resource-grid { grid-template-columns:1fr; } .resource { padding:21px; } .resource-type { margin-bottom:12px; } .footer-inner { flex-direction:column; gap:8px; text-align:center; } dialog { padding:12px; }
+    }
+    @media (max-width:360px) { .header-inner { gap:8px; } .brand .longcat-logo { width:130px; } nav { gap:8px; } nav a { font-size:11px; } nav .nav-code { padding:4px 6px; } }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { transition:none !important; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="header">
+    <div class="wrap header-inner">
+      <a class="brand" href="#top" aria-label="LongCat Interaction — Data World home"><img class="longcat-logo" src="assets/longcat-interaction-logo.png" alt="LongCat Interaction" width="645" height="178"></a>
+      <nav aria-label="Main navigation">
+        <a class="hide-mobile" href="#about">Overview</a><a href="#method">Method</a><a class="hide-mobile" href="#benchmark">Benchmark</a><a href="#resources">Resources</a><a class="nav-code" href="https://github.com/Zhanli-Li/Data-World" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <div class="hero" id="top">
+      <div class="wrap">
+        <p class="eyebrow">Mechanism-first data environments</p>
+        <img class="hero-logo" src="assets/data-world-logo.png" alt="Data World" width="1029" height="858" fetchpriority="high">
+        <h1>Scaling Data Environments<span>from Scratch</span></h1>
+        <p class="hero-sub">Specify the world behind the files.<br>Generate realistic data. Ground analytical supervision.</p>
+        <div class="authors" aria-label="Paper authors">
+          <span>Zhanli Li<sup>3,4 † §</sup></span><span>Zeyuan Xu<sup>5</sup></span><span>Chaoxu Pang<sup>3</sup></span><span>Zeyuan Liu<sup>3</sup></span><span>Anyang Ji<sup>1,2,3 †</sup></span><span>Te Sun<sup>6</sup></span>
+          <span>Kongcheng Zhang<sup>3,7 †</sup></span><span>Wenbo Xu<sup>3,8 †</sup></span><span>Xubin Yue<sup>3,7 †</sup></span><span>Shipeng Luo<sup>9</sup></span>
+          <span>Junjie Zhao<sup>6</sup></span><span>Yingfan Hua<sup>10</sup></span><span>Jingqing Ruan<sup>3</sup></span><span>Zhongda Su<sup>3</sup></span><span>Feng Hong<sup>3 *</sup></span>
+          <span>Zhizhao Zeng<sup>3</sup></span><span>Ke Zeng<sup>3</sup></span><span>Xunliang Cai<sup>3</sup></span><span>Hanjia Ye<sup>1,2 *</sup></span>
+        </div>
+        <p class="affiliation-summary">Longcat Interaction Team, Meituan · Nanjing University · and collaborators</p>
+        <details class="affiliations">
+          <summary>All affiliations &amp; author notes</summary>
+          <div class="affiliation-list">
+            <p><sup>1</sup> School of Artificial Intelligence, Nanjing University</p><p><sup>2</sup> National Key Laboratory for Novel Software Technology, Nanjing University</p>
+            <p><sup>3</sup> Longcat Interaction Team, Meituan</p><p><sup>4</sup> Zhongnan University of Economics and Law</p>
+            <p><sup>5</sup> Hunan University</p><p><sup>6</sup> Shanghai Jiao Tong University</p>
+            <p><sup>7</sup> Zhejiang University</p><p><sup>8</sup> Nanjing University</p>
+            <p><sup>9</sup> Institute of Automation, Chinese Academy of Sciences</p><p><sup>10</sup> The Chinese University of Hong Kong</p>
+            <p class="author-note">† Work done during an internship at Longcat Interaction Team, Meituan. § First author. * Corresponding authors.</p>
+          </div>
+        </details>
+        <div class="actions" aria-label="Project resources">
+          <a class="button primary" href="https://github.com/Zhanli-Li/Data-World" target="_blank" rel="noopener noreferrer" aria-label="Code on GitHub"><img class="platform-logo" src="assets/platform_logos/github-logo.svg" alt="" width="20" height="20">Code</a>
+          <span class="button pending" aria-label="Paper on arXiv, coming soon"><img class="platform-logo arxiv" src="assets/platform_logos/arxiv-logo.svg" alt="" width="20" height="20">Paper <small>Coming soon</small></span>
+          <span class="button pending" aria-label="Dataset on Hugging Face, coming soon"><img class="platform-logo" src="assets/platform_logos/huggingface-logo.svg" alt="" width="20" height="20">Dataset <small>Coming soon</small></span>
+          <span class="button pending" aria-label="Model on Hugging Face, coming soon"><img class="platform-logo" src="assets/platform_logos/huggingface-logo.svg" alt="" width="20" height="20">Model <small>Coming soon</small></span>
+        </div>
+        <p class="release-note">Code is available. Public paper, dataset, and model links will be added when released.</p>
+      </div>
+    </div>
+    <section id="about">
+      <div class="wrap intro-grid">
+        <div class="intro-text">
+          <p class="section-number">01 / The idea</p>
+          <h2>Build the world.<br>Not just the tables.</h2>
+          <p>Real data is costly to curate, difficult to share, and often missing the generative truth needed to verify open-ended findings. Exploring files alone can also leave valid insights without matching evaluation criteria.</p>
+          <p><strong>Data World reverses the process.</strong> We specify mechanisms first, construct a coherent canonical state, and project it into realistic, imperfect files. Independent audits check whether selected analytical targets remain recoverable from those observations.</p>
+          <div class="quote">Known mechanisms.<br>Imperfect observations.<br>Grounded supervision.</div>
+        </div>
+        <div class="world-card">
+          <div class="card-top"><span>A WORLD, FROM THE INSIDE</span><span>Mechanism → observation</span></div>
+          <div class="world-path" aria-label="Illustrative dependency: supply to inventory to delivery">
+            <span class="node">Supply</span><span class="arrow" aria-hidden="true">→</span><span class="node">Inventory</span><span class="arrow" aria-hidden="true">→</span><span class="node blue">Delivery</span>
+          </div>
+          <div class="file-list" aria-label="Illustrative analyst-visible files"><span><b>env/</b></span><span>├── supplier_orders.csv</span><span>├── warehouse_snapshots.xlsx</span><span>└── delivery_events.csv</span></div>
+          <p class="question"><small>The analytical question</small>What explains the rise in late deliveries, and how does the effect vary across warehouses?</p>
+          <p class="illustrative">Illustrative workflow, not a released benchmark example. The solver sees files and a task—not the hidden mechanisms or rubric.</p>
+        </div>
+      </div>
+    </section>
+    <section class="band" id="method">
+      <div class="wrap">
+        <div class="section-head"><div><p class="section-number">02 / The engine</p><h2>From mechanisms<br>to measurable insight.</h2></div><p class="section-intro">Independent agent sessions communicate through artifacts. A dependency DAG guides generation; a generative record grounds tasks and rubrics.</p></div>
+        <figure class="figure-frame">
+          <button class="figure-button" id="open-figure" type="button" aria-label="Enlarge the Data World pipeline figure" aria-haspopup="dialog"><img src="assets/data-world-overview.png" alt="Data World pipeline: world specification, layer-wise canonical state construction, observation projection, independent audit, task synthesis, solving and evaluation" width="2154" height="1324" loading="lazy"></button>
+          <figcaption class="figure-caption"><span>The complete Data World synthesis and evaluation pipeline.</span><span>Click to explore ↗</span></figcaption>
+        </figure>
+        <div class="steps">
+          <article><span class="step-num">01 — SPECIFY</span><h3>World contract</h3><p>Define entities, timelines, edge mechanisms, invariants, and observation systems before generating any files.</p></article>
+          <article><span class="step-num">02 — CONSTRUCT</span><h3>Canonical state</h3><p>Build topological layers in order, using committed upstream state as read-only input.</p></article>
+          <article><span class="step-num">03 — OBSERVE</span><h3>Realistic imperfections</h3><p>Project truth through explicit missingness, delays, identifier mismatches, duplicates, and drift.</p></article>
+          <article><span class="step-num">04 — VERIFY</span><h3>Audit &amp; supervision</h3><p>Audit relationships and target recoverability, then generate tasks with atomic positive and negative rubric items.</p></article>
+        </div>
+      </div>
+    </section>
+    <section id="benchmark">
+      <div class="wrap">
+        <div class="section-head"><div><p class="section-number">03 / Evaluation</p><h2>Beyond getting<br>the numbers right.</h2></div><p class="section-intro">DataWorld-Bench separates data computation from insight discovery. Strong processing does not automatically yield grounded analytical conclusions.</p></div>
+        <figure class="benchmark-chart" aria-labelledby="chart-title" aria-describedby="chart-caption">
+          <div class="chart-header"><div><h3 id="chart-title">DataWorld-Bench · model comparison</h3><p>Each model has a consistent color; shading and patterns distinguish the three scores. Higher is better.</p></div><label class="chart-sort" for="chart-sort">Order by <select id="chart-sort"><option value="2">Average score</option><option value="0">Data computation</option><option value="1">Insight discovery</option></select></label></div>
+          <div class="chart-legend" aria-label="Score legend"><span><i class="score-computation" aria-hidden="true"></i>Data computation</span><span><i class="score-insight" aria-hidden="true"></i>Insight discovery</span><span><i class="score-average" aria-hidden="true"></i>Average</span></div>
+          <div class="model-color-legend" id="model-color-legend" aria-label="Model color legend"></div>
+          <div class="chart-layout">
+            <div class="chart-axis" aria-hidden="true"><span style="top:0">100</span><span style="bottom:80%">80</span><span style="bottom:60%">60</span><span style="bottom:40%">40</span><span style="bottom:20%">20</span><span style="bottom:0">0</span></div>
+            <div class="chart-scroll" tabindex="0" role="region" aria-label="Scrollable grouped bar chart, scores from zero to 100"><div class="chart-plot" id="benchmark-plot"><div class="chart-grid" aria-hidden="true"><i style="top:0"></i><i style="top:20%"></i><i style="top:40%"></i><i style="top:60%"></i><i style="top:80%"></i><i style="top:100%"></i></div></div></div>
+          </div>
+          <p class="chart-detail" id="chart-detail">Hover, focus, or tap a bar to see its exact mean and standard deviation.</p>
+          <figcaption class="chart-caption" id="chart-caption">Manuscript-reported normalized rubric scores × 100. Colors identify models: light fill = data computation, diagonal stripes = insight discovery, solid fill = average. Bars show means, not stacked scores; SD is available on each bar and in the full table. Average pools all rubric items and need not equal the mean of the two section scores. On smaller screens, swipe horizontally to view all models.</figcaption>
+          <p class="chart-callout">Every model scores lower on insight discovery than on data computation—a gap of 4.87–21.35 points.</p>
+          <noscript><p class="chart-caption">Enable JavaScript to view the chart. All results remain available in the table below.</p></noscript>
+          <details class="results-table"><summary>View full results · scores, standard deviations &amp; interaction costs</summary><div class="table-scroll" tabindex="0" role="region" aria-label="Full DataWorld-Bench results table">
+            <table id="benchmark-data"><caption>Mean (SD). Score columns are normalized rubric scores × 100; bold / underlined means denote best / second-best scores. Rounds count model calls. Total tokens are prompt plus output of the final call; response tokens sum outputs over the run. Token columns are in thousands.</caption>
+              <thead><tr><th rowspan="2" scope="col">Model</th><th colspan="3" scope="colgroup">Score ↑</th><th colspan="3" scope="colgroup">Interaction and length</th></tr><tr><th scope="col">Data computation</th><th scope="col">Insight discovery</th><th scope="col">Average</th><th scope="col">Rounds</th><th scope="col">Total tokens (k)</th><th scope="col">Resp. tokens (k)</th></tr></thead>
+              <tbody>
+                <tr data-color="#aeb7c0"><th scope="row"><span class="table-model"><img class="model-logo" src="assets/model_logos/openai.png" alt="" width="20" height="20">GPT-6-Astra</span></th><td data-mean="87.80" data-sd="16.38"><strong>87.80</strong> <small>(16.38)</small></td><td data-mean="66.45" data-sd="20.98"><u>66.45</u> <small>(20.98)</small></td><td data-mean="74.43" data-sd="15.85"><strong>74.43</strong> <small>(15.85)</small></td><td>28.7 <small>(8.7)</small></td><td>121.9 <small>(36.4)</small></td><td>88.8 <small>(18.9)</small></td></tr>
+                <tr data-color="#ad9acf"><th scope="row"><span class="table-model"><img class="model-logo" src="assets/model_logos/qwen.png" alt="" width="20" height="20">Qwen-3.8-Max-0902</span></th><td data-mean="82.36" data-sd="17.79">82.36 <small>(17.79)</small></td><td data-mean="67.95" data-sd="22.92"><strong>67.95</strong> <small>(22.92)</small></td><td data-mean="73.43" data-sd="16.81"><u>73.43</u> <small>(16.81)</small></td><td>82.7 <small>(23.5)</small></td><td>289.7 <small>(81.9)</small></td><td>125.8 <small>(33.0)</small></td></tr>
+                <tr data-color="#8996a3"><th scope="row"><span class="table-model"><img class="model-logo" src="assets/model_logos/openai.png" alt="" width="20" height="20">GPT-6.1-Sol</span></th><td data-mean="85.59" data-sd="17.26"><u>85.59</u> <small>(17.26)</small></td><td data-mean="66.02" data-sd="21.02">66.02 <small>(21.02)</small></td><td data-mean="73.30" data-sd="16.44">73.30 <small>(16.44)</small></td><td>31.2 <small>(10.6)</small></td><td>135.2 <small>(46.3)</small></td><td>103.4 <small>(30.4)</small></td></tr>
+                <tr data-color="#96acb9"><th scope="row"><span class="table-model"><img class="model-logo" src="assets/model_logos/zai.png" alt="" width="20" height="20">GLM 5.3</span></th><td data-mean="75.08" data-sd="21.22">75.08 <small>(21.22)</small></td><td data-mean="63.18" data-sd="21.56">63.18 <small>(21.56)</small></td><td data-mean="67.69" data-sd="17.67">67.69 <small>(17.67)</small></td><td>89.9 <small>(28.0)</small></td><td>238.7 <small>(96.6)</small></td><td>116.3 <small>(49.4)</small></td></tr>
+                <tr data-color="#97c8bb"><th scope="row"><span class="table-model"><img class="model-logo" src="assets/model_logos/hunyuan.png" alt="" width="20" height="20">HY4-Preview</span></th><td data-mean="77.27" data-sd="20.63">77.27 <small>(20.63)</small></td><td data-mean="60.00" data-sd="21.38">60.00 <small>(21.38)</small></td><td data-mean="66.55" data-sd="17.72">66.55 <small>(17.72)</small></td><td>70.7 <small>(21.3)</small></td><td>177.9 <small>(49.2)</small></td><td>86.0 <small>(23.3)</small></td></tr>
+                <tr data-color="#9c9caa"><th scope="row"><span class="table-model"><img class="model-logo" src="assets/model_logos/kimi.png" alt="" width="20" height="20">Kimi-K3</span></th><td data-mean="72.64" data-sd="22.83">72.64 <small>(22.83)</small></td><td data-mean="62.89" data-sd="23.43">62.89 <small>(23.43)</small></td><td data-mean="66.39" data-sd="19.14">66.39 <small>(19.14)</small></td><td>36.4 <small>(14.4)</small></td><td>97.5 <small>(35.1)</small></td><td>48.0 <small>(16.8)</small></td></tr>
+                <tr data-color="#90b0df"><th scope="row"><span class="table-model"><img class="model-logo" src="assets/model_logos/deepseek.png" alt="" width="20" height="20">DeepSeek-V4.1-Flash</span></th><td data-mean="72.30" data-sd="19.72">72.30 <small>(19.72)</small></td><td data-mean="57.34" data-sd="20.29">57.34 <small>(20.29)</small></td><td data-mean="62.95" data-sd="16.93">62.95 <small>(16.93)</small></td><td>58.1 <small>(20.2)</small></td><td>150.7 <small>(48.0)</small></td><td>74.0 <small>(24.3)</small></td></tr>
+                <tr data-color="#cabde0"><th scope="row"><span class="table-model"><img class="model-logo" src="assets/model_logos/qwen.png" alt="" width="20" height="20">Qwen-3.8-27B</span></th><td data-mean="66.93" data-sd="25.33">66.93 <small>(25.33)</small></td><td data-mean="54.93" data-sd="22.46">54.93 <small>(22.46)</small></td><td data-mean="59.64" data-sd="20.16">59.64 <small>(20.16)</small></td><td>55.1 <small>(18.5)</small></td><td>170.4 <small>(39.7)</small></td><td>82.1 <small>(20.7)</small></td></tr>
+                <tr data-color="#b6c8de"><th scope="row"><span class="table-model"><img class="model-logo" src="assets/model_logos/gemini.png" alt="" width="20" height="20">Gemini-3.8-Flash</span></th><td data-mean="59.00" data-sd="21.70">59.00 <small>(21.70)</small></td><td data-mean="54.13" data-sd="21.18">54.13 <small>(21.18)</small></td><td data-mean="56.17" data-sd="17.01">56.17 <small>(17.01)</small></td><td>62.3 <small>(15.6)</small></td><td>98.8 <small>(20.9)</small></td><td>50.8 <small>(10.3)</small></td></tr>
+                <tr data-color="#d6a1b0"><th scope="row"><span class="table-model"><img class="model-logo" src="assets/model_logos/minimax.png" alt="" width="20" height="20">MiniMax-M3</span></th><td data-mean="53.39" data-sd="20.44">53.39 <small>(20.44)</small></td><td data-mean="47.39" data-sd="19.85">47.39 <small>(19.85)</small></td><td data-mean="49.75" data-sd="16.89">49.75 <small>(16.89)</small></td><td>93.8 <small>(32.1)</small></td><td>158.4 <small>(47.2)</small></td><td>62.6 <small>(19.4)</small></td></tr>
+              </tbody>
+            </table>
+          </div></details>
+        </figure>
+        <div class="benchmark-grid">
+          <article class="benchmark-card"><header><h3>DataWorld-Bench</h3><span class="tag">World-disjoint evaluation</span></header><p>Human preference-based curation selects realistic questions from audited, held-out worlds. Each world contributes a cause and a consequence task.</p><div class="split-metrics"><div><strong>100</strong><span>tasks</span></div><div><strong>50</strong><span>held-out worlds</span></div><div><strong>16</strong><span>domains</span></div></div><div class="domain-tags"><span>Multi-source files</span><span>Cause &amp; consequence</span><span>Observed data only</span><span>Atomic rubric scoring</span></div></article>
+          <article class="benchmark-card"><header><h3>Two complementary capabilities</h3></header><div class="rubric-row"><strong>Data computation</strong><p>Recover analyzable data from heterogeneous files: parsing, cleaning, joins, granularity, and metric definitions.</p></div><div class="rubric-row"><strong>Insight discovery</strong><p>Answer the question with supported comparisons, relationships, magnitudes, heterogeneity, and limitations.</p></div><p>Rubrics ground selected targets, not every valid insight. Unlisted findings are not penalized merely for being unlisted.</p></article>
+        </div>
+        <p class="protocol">Task-solving evaluation uses <a href="https://github.com/SWE-agent/mini-swe-agent" target="_blank" rel="noopener noreferrer">mini-swe-agent v2.4.6</a>. Generation and task synthesis use Claude Code. Test worlds are excluded from training.</p>
+      </div>
+    </section>
+    <section class="results" id="training">
+      <div class="wrap">
+        <div class="results-panel"><div><p class="section-number">04 / Training utility</p><h2>Synthetic worlds.<br>Transfer beyond them.</h2><p>RL-zero training produces DataWorld-35B-A3B from Qwen3.6-35B-A3B using its own rollouts and rubric rewards—without task-solving demonstrations or stronger-model trajectory distillation.</p></div><div class="gain-grid" aria-label="Manuscript-reported gains over the base model in score points"><div class="gain"><strong>+7.06</strong><span>DataWorld-Bench · points</span></div><div class="gain"><strong>+14.28</strong><span>DAComp · points</span></div><div class="gain"><strong>+20.90</strong><span>DABstep-Hard · points</span></div><div class="gain"><strong>+12.13</strong><span>JobBench · points</span></div></div></div>
+        <p class="result-note">Manuscript-reported gains under matched evaluation. Benchmarks retain their own scoring rules; gains should be interpreted within each benchmark, not compared across benchmarks. These results are not reproduced by the repository quick start.</p>
+        <div class="training-block" aria-labelledby="training-compare-title">
+          <header><div><p class="section-number">Table 3 / Final capability</p><h3 id="training-compare-title">Same backbone. Four benchmarks.</h3><p>Compare DataWorld-35B-A3B with its base and three same-base models. Each panel uses a zero-to-100 score axis; interpret scores within its own benchmark.</p></div><span class="tag">Matched evaluation</span></header>
+          <div class="training-comparisons" id="training-comparisons"></div>
+          <p class="training-chart-hint">Gray: base · Blue: comparison models · Green: DataWorld.</p>
+          <p class="chart-detail" id="training-detail">Hover, focus, or tap a row to see its full model name, mean and SD.</p>
+          <noscript><p class="training-caption">Enable JavaScript to view the comparison charts. The complete results are available below.</p></noscript>
+          <p class="training-caption">DataWorld has the highest reported mean among these same-base models on all four benchmarks. The comparisons assess overall training utility—not an isolated effect of the dataset or optimization recipe. Higher scores also accompany more model calls and response tokens than the base; see the cost columns below.</p>
+          <details class="results-table training-table"><summary>View Table 3 · all scores, SDs, rounds &amp; response tokens</summary><div class="table-scroll" tabindex="0" role="region" aria-label="Full training utility results">
+            <table id="training-data"><caption>Mean (SD); gains in score points relative to the base. Gains are transcribed as reported and may differ slightly from subtracting displayed, rounded means. Response tokens are in thousands. Comparison charts display score means, not confidence intervals.</caption>
+              <thead><tr><th rowspan="2" scope="col">Model</th><th colspan="3" scope="colgroup">JobBench</th><th colspan="3" scope="colgroup">DAComp</th><th colspan="3" scope="colgroup">DABstep-Hard</th><th colspan="3" scope="colgroup">DataWorld-Bench</th></tr><tr><th scope="col">Score ↑</th><th scope="col">Rounds</th><th scope="col">Resp. tokens (k)</th><th scope="col">Score ↑</th><th scope="col">Rounds</th><th scope="col">Resp. tokens (k)</th><th scope="col">Score ↑</th><th scope="col">Rounds</th><th scope="col">Resp. tokens (k)</th><th scope="col">Score ↑</th><th scope="col">Rounds</th><th scope="col">Resp. tokens (k)</th></tr></thead>
+              <tbody>
+                <tr data-label="Base" data-kind="base"><th scope="row">Qwen3.6-35B-A3B</th><td data-mean="18.31" data-sd="18.12">18.31 <small>(18.12)</small></td><td>38.7 <small>(17.4)</small></td><td>60.4 <small>(22.1)</small></td><td data-mean="53.72" data-sd="20.35">53.72 <small>(20.35)</small></td><td>35.6 <small>(17.7)</small></td><td>41.8 <small>(19.6)</small></td><td data-mean="25.66" data-sd="43.73">25.66 <small>(43.73)</small></td><td>28.6 <small>(18.0)</small></td><td>15.1 <small>(15.3)</small></td><td data-mean="37.64" data-sd="11.62">37.64 <small>(11.62)</small></td><td>36.5 <small>(13.9)</small></td><td>38.4 <small>(19.2)</small></td></tr>
+                <tr data-label="DataMind"><th scope="row">DataMind-35B-A3B</th><td data-mean="22.93" data-sd="22.33" data-gain="4.63">22.93 <small>(22.33)</small> <span class="training-delta">+4.63</span></td><td>36.6 <small>(12.7)</small></td><td>73.9 <small>(28.0)</small></td><td data-mean="54.79" data-sd="20.49" data-gain="1.07">54.79 <small>(20.49)</small> <span class="training-delta">+1.07</span></td><td>37.6 <small>(14.1)</small></td><td>47.7 <small>(19.0)</small></td><td data-mean="31.22" data-sd="46.40" data-gain="5.56">31.22 <small>(46.40)</small> <span class="training-delta">+5.56</span></td><td>40.3 <small>(17.6)</small></td><td>26.3 <small>(16.8)</small></td><td data-mean="37.36" data-sd="11.14" data-gain="-0.29">37.36 <small>(11.14)</small> <span class="training-delta negative">−0.29</span></td><td>34.4 <small>(9.6)</small></td><td>42.0 <small>(17.2)</small></td></tr>
+                <tr data-label="BigBang"><th scope="row">BigBang-v1</th><td data-mean="20.84" data-sd="20.69" data-gain="2.53">20.84 <small>(20.69)</small> <span class="training-delta">+2.53</span></td><td>68.9 <small>(23.4)</small></td><td>84.3 <small>(30.1)</small></td><td data-mean="54.31" data-sd="20.93" data-gain="0.58">54.31 <small>(20.93)</small> <span class="training-delta">+0.58</span></td><td>45.1 <small>(22.9)</small></td><td>38.2 <small>(18.4)</small></td><td data-mean="34.66" data-sd="47.65" data-gain="8.99">34.66 <small>(47.65)</small> <span class="training-delta">+8.99</span></td><td>37.2 <small>(24.5)</small></td><td>35.5 <small>(34.0)</small></td><td data-mean="40.05" data-sd="12.06" data-gain="2.41">40.05 <small>(12.06)</small> <span class="training-delta">+2.41</span></td><td>58.4 <small>(27.8)</small></td><td>46.7 <small>(18.1)</small></td></tr>
+                <tr data-label="Occamy"><th scope="row">Occamy-1.0</th><td data-mean="30.18" data-sd="23.79" data-gain="11.87">30.18 <small>(23.79)</small> <span class="training-delta">+11.87</span></td><td>79.2 <small>(41.7)</small></td><td>96.4 <small>(38.9)</small></td><td data-mean="64.86" data-sd="20.89" data-gain="11.13">64.86 <small>(20.89)</small> <span class="training-delta">+11.13</span></td><td>49.1 <small>(22.5)</small></td><td>45.4 <small>(21.6)</small></td><td data-mean="44.44" data-sd="49.76" data-gain="18.78">44.44 <small>(49.76)</small> <span class="training-delta">+18.78</span></td><td>31.0 <small>(21.3)</small></td><td>26.3 <small>(28.4)</small></td><td data-mean="42.38" data-sd="14.06" data-gain="4.74">42.38 <small>(14.06)</small> <span class="training-delta">+4.74</span></td><td>61.5 <small>(25.8)</small></td><td>58.2 <small>(28.3)</small></td></tr>
+                <tr class="training-highlight" data-label="DataWorld" data-kind="ours"><th scope="row">DataWorld-35B-A3B</th><td data-mean="30.43" data-sd="23.92" data-gain="12.13"><strong>30.43</strong> <small>(23.92)</small> <span class="training-delta">+12.13</span></td><td>63.6 <small>(28.9)</small></td><td>88.1 <small>(29.1)</small></td><td data-mean="68.00" data-sd="18.90" data-gain="14.28"><strong>68.00</strong> <small>(18.90)</small> <span class="training-delta">+14.28</span></td><td>78.4 <small>(25.0)</small></td><td>65.9 <small>(21.7)</small></td><td data-mean="46.56" data-sd="49.95" data-gain="20.90"><strong>46.56</strong> <small>(49.95)</small> <span class="training-delta">+20.90</span></td><td>43.2 <small>(22.3)</small></td><td>36.3 <small>(28.0)</small></td><td data-mean="44.70" data-sd="13.94" data-gain="7.06"><strong>44.70</strong> <small>(13.94)</small> <span class="training-delta">+7.06</span></td><td>102.8 <small>(22.6)</small></td><td>68.4 <small>(17.6)</small></td></tr>
+              </tbody>
+            </table>
+          </div></details>
+        </div>
+        <figure class="training-block" aria-labelledby="progress-title">
+          <header><div><p class="section-number">Figure 4 / Training dynamics</p><h3 id="progress-title">Capability grows as training progresses.</h3><p>Four trajectories from the pre-RL base to the final checkpoint. The original figure preserves the observed checkpoint scores and benchmark-specific axes.</p></div><span class="tag">Original manuscript figure</span></header>
+          <button class="figure-button" id="open-progress" type="button" aria-label="Enlarge the four benchmark training curves" aria-haspopup="dialog"><img class="progress-image" src="assets/training-progress.png" alt="Original Figure 4: scores on JobBench, DAComp, DABstep-Hard and DataWorld-Bench from the pre-RL base through training checkpoints 40 to 90. Final scores are 0.3043, 0.6800, 0.4656 and 0.4470, respectively." width="1566" height="1134" loading="lazy"></button>
+          <figcaption class="training-caption">Click to enlarge. Figure 4 uses unscaled scores (for example, 0.4470 corresponds to 44.70 in Table 3). Each panel has its own vertical range, so apparent slopes and curve heights should not be compared across benchmarks. Percentage labels in the figure are relative gains, distinct from absolute score-point gains.</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section class="band" id="resources">
+      <div class="wrap">
+        <div class="section-head"><div><p class="section-number">05 / Explore &amp; build</p><h2>A foundation for<br>your next data world.</h2></div><p class="section-intro">Start with the synthesis engine today. Curated datasets, model weights, and the public paper link will be added as they become available.</p></div>
+        <div class="resource-grid">
+          <a class="resource" href="https://github.com/Zhanli-Li/Data-World" target="_blank" rel="noopener noreferrer"><div class="resource-type"><span>Open-source engine</span><span aria-hidden="true">↗</span></div><h3>Code &amp; documentation</h3><p>DAG generation, world synthesis, task rubrics, and Harbor export. Includes examples and bilingual usage documentation.</p><span class="resource-status">Explore on GitHub →</span></a>
+          <article class="resource pending"><div class="resource-type"><span>Data release</span></div><h3>Benchmark &amp; training data</h3><p>Curated analytical tasks with environments and grounded rubrics. Not bundled in the current code repository.</p><span class="resource-status">Public link coming soon</span></article>
+          <article class="resource pending"><div class="resource-type"><span>Model release</span></div><h3>DataWorld-35B-A3B</h3><p>A data agent trained with RL-zero on synthesized worlds. Model weights are not bundled in the code repository.</p><span class="resource-status">Public link coming soon</span></article>
+        </div>
+        <p class="contact">Correspondence: <a href="mailto:hongfeng03@meituan.com">Feng Hong</a> · <a href="mailto:yehj@lamda.nju.edu.cn">Hanjia Ye</a></p>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-inner"><span>Data World · Scaling Data Environments from Scratch</span><span><a href="https://github.com/Zhanli-Li/Data-World" target="_blank" rel="noopener noreferrer">Project repository ↗</a> · <a href="#top">Back to top ↑</a></span></div></footer>
+  <dialog id="figure-dialog" aria-labelledby="figure-title"><div class="dialog-top"><p id="figure-title">Data World — synthesis &amp; evaluation pipeline</p><button class="dialog-close" id="close-figure" type="button">Close ×</button></div><img src="assets/data-world-overview.png" alt="Enlarged Data World synthesis and evaluation pipeline" width="2154" height="1324" loading="lazy"></dialog>
+  <dialog id="progress-dialog" aria-labelledby="progress-dialog-title"><div class="dialog-top"><p id="progress-dialog-title">Figure 4 — performance over RL training</p><button class="dialog-close" id="close-progress" type="button">Close ×</button></div><img src="assets/training-progress.png" alt="Enlarged original training curves across JobBench, DAComp, DABstep-Hard and DataWorld-Bench" width="1566" height="1134" loading="lazy"></dialog>
+  <script>
+    // The visible results table is the single source of truth for the chart.
+    const metrics = [
+      { label: 'Data computation', className: 'score-computation' },
+      { label: 'Insight discovery', className: 'score-insight' },
+      { label: 'Average', className: 'score-average' }
+    ];
+    const modelResults = Array.from(document.querySelectorAll('#benchmark-data tbody tr'), (row) => ({
+      name: row.querySelector('th').textContent.trim(),
+      logo: row.querySelector('img').getAttribute('src'),
+      color: row.dataset.color,
+      scores: Array.from(row.querySelectorAll('td[data-mean]'), (cell) => ({
+        mean: Number(cell.dataset.mean), sd: Number(cell.dataset.sd)
+      }))
+    }));
+    const plot = document.getElementById('benchmark-plot');
+    const chartDetail = document.getElementById('chart-detail');
+    const chartSort = document.getElementById('chart-sort');
+    const modelLegend = document.getElementById('model-color-legend');
+    modelResults.forEach((model) => {
+      const item = document.createElement('span');
+      item.style.setProperty('--model-color', model.color);
+      const swatch = document.createElement('i');
+      swatch.setAttribute('aria-hidden', 'true');
+      const logo = document.createElement('img');
+      logo.className = 'model-logo';
+      logo.src = model.logo;
+      logo.alt = '';
+      logo.width = 16;
+      logo.height = 16;
+      item.append(swatch, logo, document.createTextNode(model.name));
+      modelLegend.append(item);
+    });
+    function renderBenchmarkChart(metricIndex) {
+      plot.querySelectorAll('.model-group').forEach((group) => group.remove());
+      const ordered = [...modelResults].sort((a, b) => b.scores[metricIndex].mean - a.scores[metricIndex].mean);
+      ordered.forEach((model) => {
+        const group = document.createElement('div');
+        group.className = 'model-group';
+        group.style.setProperty('--model-color', model.color);
+        const bars = document.createElement('div');
+        bars.className = 'model-bars';
+        model.scores.forEach((score, index) => {
+          const bar = document.createElement('button');
+          bar.type = 'button';
+          bar.className = `score-bar ${metrics[index].className}`;
+          bar.style.setProperty('--score', score.mean);
+          const detail = `${model.name} · ${metrics[index].label}: ${score.mean.toFixed(2)} (SD ${score.sd.toFixed(2)})`;
+          bar.setAttribute('aria-label', detail);
+          bar.setAttribute('aria-describedby', 'chart-caption');
+          bar.title = detail;
+          const value = document.createElement('span');
+          value.textContent = score.mean.toFixed(2);
+          value.setAttribute('aria-hidden', 'true');
+          bar.append(value);
+          ['pointerenter', 'focus', 'click'].forEach((eventName) => {
+            bar.addEventListener(eventName, () => { chartDetail.textContent = detail; });
+          });
+          bars.append(bar);
+        });
+        const label = document.createElement('div');
+        label.className = 'model-label';
+        const logo = document.createElement('img');
+        logo.className = 'model-logo';
+        logo.src = model.logo;
+        logo.alt = '';
+        logo.width = 25;
+        logo.height = 25;
+        const name = document.createElement('span');
+        name.textContent = model.name;
+        label.append(logo, name);
+        group.append(bars, label);
+        plot.append(group);
+      });
+    }
+    chartSort.addEventListener('change', () => {
+      renderBenchmarkChart(Number(chartSort.value));
+      chartDetail.textContent = `Models ordered by ${metrics[Number(chartSort.value)].label.toLowerCase()} (highest first). Select a bar for mean and SD.`;
+    });
+    renderBenchmarkChart(Number(chartSort.value));
+
+    const trainingModels = Array.from(document.querySelectorAll('#training-data tbody tr'), (row) => ({
+      name: row.querySelector('th').textContent.trim(), label: row.dataset.label, kind: row.dataset.kind || '',
+      scores: Array.from(row.querySelectorAll('td[data-mean]'), (cell) => ({
+        mean: Number(cell.dataset.mean), sd: Number(cell.dataset.sd), gain: Number(cell.dataset.gain || 0)
+      }))
+    }));
+    const trainingBenchmarks = [
+      { name: 'DataWorld-Bench', index: 3, scope: 'Held-out, world-disjoint tasks' },
+      { name: 'DAComp', index: 1, scope: 'External data-analysis benchmark' },
+      { name: 'DABstep-Hard', index: 2, scope: 'External data-analysis benchmark' },
+      { name: 'JobBench', index: 0, scope: 'Broader occupational benchmark' }
+    ];
+    trainingBenchmarks.forEach((benchmark) => {
+      const base = trainingModels.find((model) => model.kind === 'base').scores[benchmark.index];
+      const ours = trainingModels.find((model) => model.kind === 'ours').scores[benchmark.index];
+      const card = document.createElement('article');
+      card.className = 'training-card';
+      const header = document.createElement('header');
+      const title = document.createElement('h3');
+      title.textContent = benchmark.name;
+      const gain = document.createElement('span');
+      gain.className = 'training-gain';
+      gain.textContent = `+${ours.gain.toFixed(2)} pts`;
+      header.append(title, gain);
+      const scope = document.createElement('p');
+      scope.className = 'training-scope';
+      scope.textContent = benchmark.scope;
+      card.append(header, scope);
+      trainingModels.forEach((model) => {
+        const score = model.scores[benchmark.index];
+        const row = document.createElement('div');
+        row.className = `training-row ${model.kind}`;
+        row.tabIndex = 0;
+        const description = `${model.name} · ${benchmark.name}: ${score.mean.toFixed(2)} (SD ${score.sd.toFixed(2)})`;
+        row.setAttribute('role', 'group');
+        row.setAttribute('aria-label', description);
+        row.title = description;
+        ['pointerenter', 'focus', 'click'].forEach((eventName) => {
+          row.addEventListener(eventName, () => {
+            document.getElementById('training-detail').textContent = description;
+          });
+        });
+        const label = document.createElement('span');
+        label.textContent = model.label;
+        const track = document.createElement('span');
+        track.className = 'training-track';
+        track.setAttribute('aria-hidden', 'true');
+        const fill = document.createElement('span');
+        fill.className = 'training-fill';
+        fill.style.setProperty('--score', score.mean);
+        track.append(fill);
+        const value = document.createElement('span');
+        value.className = 'training-value';
+        value.textContent = score.mean.toFixed(2);
+        row.append(label, track, value);
+        card.append(row);
+      });
+      const scale = document.createElement('div');
+      scale.className = 'training-scale';
+      scale.setAttribute('aria-hidden', 'true');
+      [0, 25, 50, 75, 100].forEach((tick) => {
+        const label = document.createElement('span');
+        label.textContent = tick;
+        scale.append(label);
+      });
+      const endpoints = document.createElement('p');
+      endpoints.className = 'training-endpoints';
+      endpoints.textContent = `Base ${base.mean.toFixed(2)} → DataWorld ${ours.mean.toFixed(2)} · +${ours.gain.toFixed(2)} score points`;
+      card.append(scale, endpoints);
+      document.getElementById('training-comparisons').append(card);
+    });
+
+    [
+      { dialog: 'figure-dialog', open: 'open-figure', close: 'close-figure', image: 'assets/data-world-overview.png' },
+      { dialog: 'progress-dialog', open: 'open-progress', close: 'close-progress', image: 'assets/training-progress.png' }
+    ].forEach((config) => {
+      const dialog = document.getElementById(config.dialog);
+      const trigger = document.getElementById(config.open);
+      trigger.addEventListener('click', () => {
+        if (typeof dialog.showModal === 'function') {
+          dialog.showModal();
+        } else {
+          window.open(config.image, '_blank', 'noopener');
+        }
+      });
+      document.getElementById(config.close).addEventListener('click', () => dialog.close());
+      dialog.addEventListener('click', (event) => {
+        const bounds = dialog.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
+          dialog.close();
+        }
+      });
+      dialog.addEventListener('close', () => trigger.focus());
+    });
+  </script>
+</body>
+</html>
