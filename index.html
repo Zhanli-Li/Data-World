@@ -68,9 +68,24 @@
     .hero::before { content:""; position:absolute; inset:-35px 0; z-index:-1; pointer-events:none; transform:translate3d(0,var(--hero-drift,0px),0); background:radial-gradient(ellipse at 18% 8%,#e9e0f2 0,transparent 58%),radial-gradient(ellipse at 86% 4%,#e6efd5 0,transparent 55%); }
     .eyebrow { display:flex; align-items:center; justify-content:center; gap:9px; color:var(--green); font-size:11px; font-weight:650; letter-spacing:2px; text-transform:uppercase; }
     .eyebrow::before { content:""; width:6px; height:6px; border-radius:50%; background:#67967e; }
-    .hero-logo { width:min(420px,85%); margin:30px auto 24px; }
+    .hero-wordmark { position:relative; width:min(420px,85%); margin:30px auto 24px; }
+    .hero-logo { width:100%; }
+    .hero-pixels { position:absolute; inset:0; pointer-events:none; }
+    .hero-pixels i { position:absolute; width:7px; height:7px; border-radius:2px; background:#7548b1; opacity:0; }
+    .hero-pixels i:nth-child(even) { background:#8dcc28; }
+    .hero-pixels i:nth-child(1) { left:-5%; top:28%; }
+    .hero-pixels i:nth-child(2) { left:8%; top:-18%; width:5px; height:5px; }
+    .hero-pixels i:nth-child(3) { left:24%; top:105%; }
+    .hero-pixels i:nth-child(4) { left:43%; top:-24%; }
+    .hero-pixels i:nth-child(5) { left:62%; top:110%; width:5px; height:5px; }
+    .hero-pixels i:nth-child(6) { left:80%; top:-17%; }
+    .hero-pixels i:nth-child(7) { left:97%; top:95%; }
+    .hero-pixels i:nth-child(8) { left:105%; top:20%; width:5px; height:5px; }
+    .hero.is-entering::before { animation:hero-bloom 1200ms cubic-bezier(.22,1,.36,1) both; }
+    @keyframes hero-bloom { from { opacity:.25; scale:1.08; } to { opacity:1; scale:1; } }
     .hero h1 { max-width:830px; margin:auto; }
     .hero h1 span { display:block; color:var(--green); }
+    .hero h1 .title-lead { color:var(--ink); }
     .hero-sub { max-width:640px; margin:22px auto 0; font-size:17px; line-height:1.75; color:var(--muted); }
     .authors { max-width:880px; margin:29px auto 0; font-size:13px; line-height:2.05; color:var(--body); }
     .authors span { display:inline-block; margin:0 5px; }
@@ -264,7 +279,7 @@
     @media (max-width:850px) { .intro-grid { gap:32px; } .section-head { align-items:flex-start; flex-direction:column; gap:16px; } .section-intro { max-width:650px; } .results-panel { gap:26px; padding:28px; } }
     @media (max-width:650px) {
       .wrap { width:calc(100% - 36px); } .header { padding-top:14px; } .header-inner { min-height:60px; padding:7px 15px; } main { --hero-top-space:88px; } html { scroll-padding-top:100px; }
-      .hero { padding-top:calc(var(--hero-top-space) + 31px); } .hero-logo { width:min(300px,92%); margin:24px auto 20px; } h1 { letter-spacing:-1.7px; } .hero-sub { font-size:15px; } .authors { margin-top:23px; font-size:11px; } .authors span { margin:0 3px; }
+      .hero { padding-top:calc(var(--hero-top-space) + 31px); } .hero-wordmark { width:min(300px,92%); margin:24px auto 20px; } h1 { letter-spacing:-1.7px; } .hero-sub { font-size:15px; } .authors { margin-top:23px; font-size:11px; } .authors span { margin:0 3px; }
       .affiliations .affiliation-list { grid-template-columns:1fr; } .button { padding:8px 13px; font-size:12px; } .actions { gap:8px; }
       section { padding:57px 0; } .intro-grid,.benchmark-grid,.results-panel { grid-template-columns:1fr; } .intro-grid { gap:28px; } .intro-text p { font-size:14px; } .quote { font-size:18px; } .world-card { padding:20px; }
       .figure-frame { padding:12px; border-radius:14px; } .figure-caption { font-size:10px; gap:10px; } .steps { grid-template-columns:1fr 1fr; gap:24px 19px; } .benchmark-card { padding:22px; } .benchmark-card header { flex-wrap:wrap; } .split-metrics { gap:24px; }
@@ -305,8 +320,11 @@
     <div class="hero" id="top">
       <div class="wrap">
         <p class="eyebrow">Mechanism-first data environments</p>
-        <img class="hero-logo" src="assets/data-world-wordmark.svg" alt="DataWorld" width="2050" height="358" fetchpriority="high">
-        <h1>Scaling Data Environments<span>from Scratch</span></h1>
+        <div class="hero-wordmark">
+          <img class="hero-logo" src="assets/data-world-wordmark.svg" alt="DataWorld" width="2050" height="358" fetchpriority="high">
+          <span class="hero-pixels" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <h1><span class="title-lead">Scaling Data Environments</span><span>from Scratch</span></h1>
         <p class="hero-sub">Specify the world behind the files.<br>Generate realistic data. Ground analytical supervision.</p>
         <div class="authors" aria-label="Paper authors">
           <span>Zhanli Li<sup>3,4 † §</sup></span><span>Zeyuan Xu<sup>5</sup></span><span>Chaoxu Pang<sup>3</sup></span><span>Zeyuan Liu<sup>3</sup></span><span>Anyang Ji<sup>1,2,3 †</sup></span><span>Te Sun<sup>6</sup></span>
@@ -728,12 +746,95 @@
       const easing = 'cubic-bezier(.22,1,.36,1)';
       let frame = null;
       let activeSection = null;
+      const entranceAnimations = new Set();
 
       function play(element, keyframes, options) {
-        if (reducedMotion.matches || typeof element.animate !== 'function') return;
+        if (reducedMotion.matches || typeof element.animate !== 'function') return null;
         const animation = element.animate(keyframes, { easing, ...options });
         runningAnimations.add(animation);
         animation.finished.then(() => runningAnimations.delete(animation), () => runningAnimations.delete(animation));
+        return animation;
+      }
+
+      function stopEntrance() {
+        hero.classList.remove('is-entering');
+        entranceAnimations.forEach((animation) => animation.cancel());
+        entranceAnimations.clear();
+        document.removeEventListener('click', stopEntrance);
+        document.removeEventListener('keydown', stopEntrance);
+        document.removeEventListener('visibilitychange', resumeEntrance);
+      }
+
+      function resumeEntrance() {
+        if (document.hidden) return;
+        document.removeEventListener('visibilitychange', resumeEntrance);
+        startEntrance();
+      }
+
+      function startEntrance() {
+        // No splash screen, scroll lock or replay when opening a deep section.
+        if (reducedMotion.matches || window.scrollY > 24 ||
+            (location.hash && location.hash !== '#top') || typeof hero.animate !== 'function') return;
+        const visible = (element) => {
+          const bounds = element.getBoundingClientRect();
+          return bounds.top < window.innerHeight && bounds.bottom > 0;
+        };
+        if (document.hidden) {
+          // Save the welcome for when a background tab is actually opened.
+          hero.querySelectorAll('.eyebrow, h1, .hero-sub, .authors, .affiliation-summary, .affiliations, .actions, .release-note').forEach((element) => {
+            if (visible(element)) element.dataset.motionPlayed = 'true';
+          });
+          document.addEventListener('visibilitychange', resumeEntrance);
+          return;
+        }
+        hero.classList.add('is-entering');
+        const enter = (element, keyframes, duration, delay = 0) => {
+          if (!element || !visible(element)) return;
+          element.dataset.motionPlayed = 'true';
+          const animation = play(element, keyframes, { duration, delay, fill: 'backwards' });
+          if (animation) entranceAnimations.add(animation);
+        };
+        const rise = [
+          { opacity: 0, translate: '0 18px' },
+          { opacity: 1, translate: '0 0' }
+        ];
+        enter(header.querySelector('.header-inner'), [
+          { opacity: 0, translate: '0 -12px' },
+          { opacity: 1, translate: '0 0' }
+        ], 650, 60);
+        enter(hero.querySelector('.eyebrow'), rise, 550, 80);
+        enter(hero.querySelector('.hero-wordmark'), [
+          { opacity: 0, clipPath: 'inset(-30% 100% -30% -12%)', translate: '0 8px' },
+          { opacity: 1, clipPath: 'inset(-30% -12% -30% -12%)', translate: '0 0' }
+        ], 850, 120);
+        hero.querySelectorAll('.hero-pixels i').forEach((pixel, index) => {
+          enter(pixel, [
+            { opacity: 0, transform: 'translateY(12px) scale(.4)' },
+            { opacity: .7, transform: 'translateY(0) scale(1)', offset: .3 },
+            { opacity: 0, transform: 'translateY(-10px) scale(.5)' }
+          ], 700, 170 + index * 55);
+        });
+        const title = hero.querySelector('h1');
+        if (visible(title)) {
+          title.dataset.motionPlayed = 'true';
+          title.querySelectorAll('span').forEach((line, index) => enter(line, rise, 700, 340 + index * 100));
+        }
+        enter(hero.querySelector('.hero-sub'), rise, 650, 570);
+        ['.authors', '.affiliation-summary', '.affiliations'].forEach((selector, index) => {
+          enter(hero.querySelector(selector), rise, 550, 650 + index * 65);
+        });
+        const actions = hero.querySelector('.actions');
+        if (visible(actions)) {
+          actions.dataset.motionPlayed = 'true';
+          Array.from(actions.children).forEach((button, index) => enter(button, rise, 500, 810 + index * 65));
+        }
+        enter(hero.querySelector('.release-note'), rise, 450, 1060);
+        document.addEventListener('click', stopEntrance, { passive: true });
+        document.addEventListener('keydown', stopEntrance);
+        const backgroundAnimation = hero.getAnimations().find((animation) => animation.animationName === 'hero-bloom');
+        const completion = Array.from(entranceAnimations, (animation) => animation.finished);
+        if (backgroundAnimation) completion.push(backgroundAnimation.finished);
+        Promise.allSettled(completion).then(stopEntrance);
       }
 
       function animateBenchmarkBars() {
@@ -753,6 +854,7 @@
       function updateScroll() {
         frame = null;
         const scrollTop = Math.max(0, window.scrollY);
+        if (scrollTop > 24 && entranceAnimations.size) stopEntrance();
         header.classList.toggle('is-scrolled', scrollTop > 16);
 
         // Small bounded parallax on desktop only; never intercept native scrolling.
@@ -784,6 +886,8 @@
       // Opening tables or loading figures can change section positions.
       if ('ResizeObserver' in window) new ResizeObserver(scheduleScroll).observe(document.body);
       updateScroll();
+      startEntrance();
+      window.addEventListener('pagehide', stopEntrance);
 
       const revealTargets = Array.from(document.querySelectorAll(
         '.hero .eyebrow, .hero h1, .hero-sub, .authors, .affiliation-summary, .affiliations, .actions, .release-note, ' +
@@ -841,6 +945,7 @@
       // Keyboard focus must never wait for a reveal or an in-flight chart animation.
       document.addEventListener('focusin', (event) => {
         revealTargets.filter((element) => element.contains(event.target)).forEach((element) => reveal(element, true));
+        if (header.contains(event.target) || hero.contains(event.target)) stopEntrance();
         runningAnimations.forEach((animation) => {
           const target = animation.effect.target;
           if (target.contains(event.target) || event.target.contains(target)) animation.cancel();
@@ -848,6 +953,7 @@
       });
       function finishMotion() {
         if (!reducedMotion.matches) { scheduleScroll(); return; }
+        stopEntrance();
         runningAnimations.forEach((animation) => animation.cancel());
         revealTargets.forEach((element) => reveal(element, true));
         if (revealObserver) revealObserver.disconnect();
@@ -857,7 +963,10 @@
       }
       reducedMotion.addEventListener('change', finishMotion);
       finishMotion();
-      window.addEventListener('beforeprint', () => runningAnimations.forEach((animation) => animation.cancel()));
+      window.addEventListener('beforeprint', () => {
+        stopEntrance();
+        runningAnimations.forEach((animation) => animation.cancel());
+      });
     })();
 
     // A finite, replayable illustration: no backend request or fabricated live run.
