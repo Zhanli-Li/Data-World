@@ -9,6 +9,7 @@
   </p>
   <p><a href="README.md">English</a> · <strong>中文</strong></p>
   <p>
+    <a href="https://zhanli-li.github.io/Data-World/">项目主页</a> ·
     <a href="#项目概览">项目概览</a> ·
     <a href="#快速开始">快速开始</a> ·
     <a href="doc/README.zh-CN.md">使用文档</a>
