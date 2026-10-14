@@ -68,19 +68,18 @@
     .hero::before { content:""; position:absolute; inset:-35px 0; z-index:-1; pointer-events:none; transform:translate3d(0,var(--hero-drift,0px),0); background:radial-gradient(ellipse at 18% 8%,#e9e0f2 0,transparent 58%),radial-gradient(ellipse at 86% 4%,#e6efd5 0,transparent 55%); }
     .eyebrow { display:flex; align-items:center; justify-content:center; gap:9px; color:var(--green); font-size:11px; font-weight:650; letter-spacing:2px; text-transform:uppercase; }
     .eyebrow::before { content:""; width:6px; height:6px; border-radius:50%; background:#67967e; }
-    .hero-wordmark { position:relative; width:min(420px,85%); margin:30px auto 24px; }
-    .hero-logo { width:100%; }
-    .hero-pixels { position:absolute; inset:0; pointer-events:none; }
-    .hero-pixels i { position:absolute; width:7px; height:7px; border-radius:2px; background:#7548b1; opacity:0; }
+    .hero-wordmark { position:relative; isolation:isolate; width:min(420px,85%); margin:30px auto 24px; }
+    .hero-logo { position:relative; z-index:1; width:100%; }
+    .hero-pixels { position:absolute; inset:0; z-index:0; pointer-events:none; }
+    .hero-pixels i { position:absolute; left:var(--origin-x); top:var(--origin-y); width:var(--size); height:var(--size); border-radius:0; background:#7548b1; opacity:0; }
     .hero-pixels i:nth-child(even) { background:#8dcc28; }
-    .hero-pixels i:nth-child(1) { left:-5%; top:28%; }
-    .hero-pixels i:nth-child(2) { left:8%; top:-18%; width:5px; height:5px; }
-    .hero-pixels i:nth-child(3) { left:24%; top:105%; }
-    .hero-pixels i:nth-child(4) { left:43%; top:-24%; }
-    .hero-pixels i:nth-child(5) { left:62%; top:110%; width:5px; height:5px; }
-    .hero-pixels i:nth-child(6) { left:80%; top:-17%; }
-    .hero-pixels i:nth-child(7) { left:97%; top:95%; }
-    .hero-pixels i:nth-child(8) { left:105%; top:20%; width:5px; height:5px; }
+    .hero-pixels.is-emitting i { animation:pixel-emission var(--flight-time) linear var(--phase) infinite; }
+    @keyframes pixel-emission {
+      0% { opacity:0; transform:translate(0,0) scale(.6); }
+      12%, 60% { opacity:.65; }
+      82% { opacity:.4; }
+      100% { opacity:0; transform:translate(var(--travel-x),var(--travel-y)) scale(.25); }
+    }
     .hero.is-entering::before { animation:hero-bloom 1200ms cubic-bezier(.22,1,.36,1) both; }
     @keyframes hero-bloom { from { opacity:.25; scale:1.08; } to { opacity:1; scale:1; } }
     .hero h1 { max-width:830px; margin:auto; }
@@ -322,7 +321,7 @@
         <p class="eyebrow">Mechanism-first data environments</p>
         <div class="hero-wordmark">
           <img class="hero-logo" src="assets/data-world-wordmark.svg" alt="DataWorld" width="2050" height="358" fetchpriority="high">
-          <span class="hero-pixels" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          <span class="hero-pixels" aria-hidden="true"></span>
         </div>
         <h1><span class="title-lead">Scaling Data Environments</span><span>from Scratch</span></h1>
         <p class="hero-sub">Specify the world behind the files.<br>Generate realistic data. Ground analytical supervision.</p>
@@ -807,13 +806,6 @@
           { opacity: 0, clipPath: 'inset(-30% 100% -30% -12%)', translate: '0 8px' },
           { opacity: 1, clipPath: 'inset(-30% -12% -30% -12%)', translate: '0 0' }
         ], 850, 120);
-        hero.querySelectorAll('.hero-pixels i').forEach((pixel, index) => {
-          enter(pixel, [
-            { opacity: 0, transform: 'translateY(12px) scale(.4)' },
-            { opacity: .7, transform: 'translateY(0) scale(1)', offset: .3 },
-            { opacity: 0, transform: 'translateY(-10px) scale(.5)' }
-          ], 700, 170 + index * 55);
-        });
         const title = hero.querySelector('h1');
         if (visible(title)) {
           title.dataset.motionPlayed = 'true';
@@ -967,6 +959,84 @@
         stopEntrance();
         runningAnimations.forEach((animation) => animation.cancel());
       });
+    })();
+
+    // A fixed pool of decorative pixels; never allocate particles per frame.
+    (() => {
+      const wordmark = document.querySelector('.hero-wordmark');
+      const particles = wordmark.querySelector('.hero-pixels');
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const fragment = document.createDocumentFragment();
+      let inView = false;
+      let printing = false;
+      let pageActive = true;
+
+      // Follow the existing pixel accents, not a radial burst around each letter.
+      // Anchor coordinates match data-world-wordmark.svg and scale with the logo.
+      const viewBox = { x: 56, y: 145, width: 2050, height: 358 };
+      const emitters = [
+        { // D: pixels peel off to the left, slightly upward.
+          direction: { x: -1, y: -.45 },
+          anchors: [{ x: 237.5, y: 339 }, { x: 191, y: 371.5 }, { x: 155.5, y: 331.5 }, { x: 157.5, y: 413.5 }],
+        },
+        { // W: follow the diagonal pixel trail toward the upper right.
+          direction: { x: .8, y: -1 },
+          anchors: [{ x: 1233.5, y: 324.5 }, { x: 1266.5, y: 285.5 }, { x: 1310, y: 237.5 }, { x: 1350, y: 276.5 }],
+        },
+        { // d: continue the upper-right pixel trail, not the circuit below.
+          direction: { x: .8, y: -1 },
+          anchors: [{ x: 2005.5, y: 230.5 }, { x: 2032.5, y: 275.5 }, { x: 2062, y: 219 }],
+        },
+      ];
+      const pixelsPerEmitter = 8;
+
+      emitters.forEach((emitter, emitterIndex) => {
+        const length = Math.hypot(emitter.direction.x, emitter.direction.y);
+        const x = emitter.direction.x / length;
+        const y = emitter.direction.y / length;
+        for (let localIndex = 0; localIndex < pixelsPerEmitter; localIndex += 1) {
+          const index = emitterIndex * pixelsPerEmitter + localIndex;
+          const anchor = emitter.anchors[localIndex % emitter.anchors.length];
+          const distance = (22 + localIndex % 4 * 6) * 1.5;
+          const pixel = document.createElement('i');
+          pixel.style.setProperty('--origin-x', `${(anchor.x - viewBox.x) / viewBox.width * 100}%`);
+          pixel.style.setProperty('--origin-y', `${(anchor.y - viewBox.y) / viewBox.height * 100}%`);
+          pixel.style.setProperty('--travel-x', `${x * distance}px`);
+          pixel.style.setProperty('--travel-y', `${y * distance}px`);
+          pixel.style.setProperty('--size', `${5 + index % 4}px`);
+          pixel.style.setProperty('--flight-time', `${1350 + index % 5 * 125}ms`);
+          pixel.style.setProperty('--phase', `${-index * 157}ms`);
+          fragment.appendChild(pixel);
+        }
+      });
+      particles.appendChild(fragment);
+
+      function syncParticles() {
+        particles.classList.toggle('is-emitting', inView && pageActive && !document.hidden && !printing && !reducedMotion.matches);
+      }
+
+      function checkVisibility() {
+        const bounds = wordmark.getBoundingClientRect();
+        inView = bounds.width > 0 && bounds.height > 0 && bounds.bottom > 0 && bounds.top < window.innerHeight;
+        syncParticles();
+      }
+
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver((entries) => {
+          inView = entries[0].isIntersecting;
+          syncParticles();
+        }, { threshold: 0 }).observe(wordmark);
+      } else {
+        window.addEventListener('scroll', checkVisibility, { passive: true });
+      }
+      window.addEventListener('resize', checkVisibility);
+      document.addEventListener('visibilitychange', checkVisibility);
+      reducedMotion.addEventListener('change', syncParticles);
+      window.addEventListener('pagehide', () => { pageActive = false; syncParticles(); });
+      window.addEventListener('pageshow', () => { pageActive = true; checkVisibility(); });
+      window.addEventListener('beforeprint', () => { printing = true; syncParticles(); });
+      window.addEventListener('afterprint', () => { printing = false; checkVisibility(); });
+      checkVisibility();
     })();
 
     // A finite, replayable illustration: no backend request or fabricated live run.
