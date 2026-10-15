@@ -3,13 +3,12 @@
   <p><strong>Scaling Data Environments from Scratch</strong></p>
   <p>Specify the world behind the files. Generate the data. Ground the supervision.</p>
   <p>
-    <img src="https://img.shields.io/badge/Python-3.9%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.9+">
-    <img src="https://img.shields.io/badge/Synthesis-Mechanism--first-579187?style=flat-square" alt="Mechanism-first synthesis">
-    <img src="https://img.shields.io/badge/Supervision-Atomic%20rubrics-6686A6?style=flat-square" alt="Atomic rubric supervision">
+    <a href="https://zhanli-li.github.io/Data-World/"><img src="https://img.shields.io/badge/Project%20Page-579187?style=flat-square" alt="Project Page"></a>
+    <a href="https://huggingface.co/collections/Zhanli-Li/dataworld"><img src="https://img.shields.io/badge/Hugging%20Face-FFD21E?style=flat-square&logo=huggingface&logoColor=black" alt="Hugging Face Collection"></a>
+    <a href="assets/dataworld-preprint.pdf"><img src="https://img.shields.io/badge/Paper-PDF-6686A6?style=flat-square" alt="Paper PDF"></a>
   </p>
   <p><strong>English</strong> · <a href="README.zh-CN.md">中文</a></p>
   <p>
-    <a href="https://zhanli-li.github.io/Data-World/">Project Page</a> ·
     <a href="#overview">Overview</a> ·
     <a href="#quick-start">Quick Start</a> ·
     <a href="doc/README.md">Documentation</a>

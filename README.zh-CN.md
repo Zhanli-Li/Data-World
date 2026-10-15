@@ -3,13 +3,12 @@
   <p><strong>Scaling Data Environments from Scratch</strong></p>
   <p>先定义文件背后的世界，再生成数据，让监督有据可依。</p>
   <p>
-    <img src="https://img.shields.io/badge/Python-3.9%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.9+">
-    <img src="https://img.shields.io/badge/Synthesis-Mechanism--first-579187?style=flat-square" alt="机制优先的合成方式">
-    <img src="https://img.shields.io/badge/Supervision-Atomic%20rubrics-6686A6?style=flat-square" alt="原子化评分细则监督">
+    <a href="https://zhanli-li.github.io/Data-World/"><img src="https://img.shields.io/badge/Project%20Page-579187?style=flat-square" alt="项目主页"></a>
+    <a href="https://huggingface.co/collections/Zhanli-Li/dataworld"><img src="https://img.shields.io/badge/Hugging%20Face-FFD21E?style=flat-square&logo=huggingface&logoColor=black" alt="Hugging Face 合集"></a>
+    <a href="assets/dataworld-preprint.pdf"><img src="https://img.shields.io/badge/Paper-PDF-6686A6?style=flat-square" alt="论文 PDF"></a>
   </p>
   <p><a href="README.md">English</a> · <strong>中文</strong></p>
   <p>
-    <a href="https://zhanli-li.github.io/Data-World/">项目主页</a> ·
     <a href="#项目概览">项目概览</a> ·
     <a href="#快速开始">快速开始</a> ·
     <a href="doc/README.zh-CN.md">使用文档</a>
