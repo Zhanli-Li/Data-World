@@ -5,7 +5,7 @@
   <p>
     <a href="https://zhanli-li.github.io/Data-World/"><img src="https://img.shields.io/badge/Project%20Page-579187?style=flat-square" alt="Project Page"></a>
     <a href="https://huggingface.co/collections/Zhanli-Li/dataworld"><img src="https://img.shields.io/badge/Hugging%20Face-FFD21E?style=flat-square&logo=huggingface&logoColor=black" alt="Hugging Face Collection"></a>
-    <a href="assets/dataworld-preprint.pdf"><img src="https://img.shields.io/badge/Paper-PDF-6686A6?style=flat-square" alt="Paper PDF"></a>
+    <a href="https://arxiv.org/abs/2610.21656"><img src="https://img.shields.io/badge/Paper-arXiv-6686A6?style=flat-square" alt="Paper on arXiv"></a>
   </p>
   <p><strong>English</strong> · <a href="README.zh-CN.md">中文</a></p>
   <p>
@@ -141,3 +141,19 @@ Installed commands are `dag-factory`, `data-world`, and `data-world-task`. `data
 - [Task synthesis and Harbor export](doc/task.md): sampling, artifact layout, grading, and credential handling.
 - [Rubric design](task/README.md): scoring sections, positive/negative criteria, and leakage boundaries.
 - [Examples](examples/README.md) · [Batch scripts](scripts/README.md)
+
+## Citation
+
+If you find our work useful, please cite our paper:
+
+```bibtex
+@misc{li2026dataworldscalingdata,
+      title={Data World: Scaling Data Environments from Scratch},
+      author={Zhanli Li and Zeyuan Xu and Chaoxu Pang and Zeyuan Liu and Anyang Ji and Te Sun and Kongcheng Zhang and Wenbo Xu and Xubin Yue and Shipeng Luo and Junjie Zhao and Yingfan Hua and Jingqing Ruan and Zhongda Su and Feng Hong and Zhizhao Zeng and Ke Zeng and Xunliang Cai and Hanjia Ye},
+      year={2026},
+      eprint={2610.21656},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2610.21656},
+}
+```

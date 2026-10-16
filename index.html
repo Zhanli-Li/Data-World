@@ -266,7 +266,8 @@
     .resource-status { font-size:11px; margin-top:20px; color:var(--green); }
     .resource.pending { background:#f4f7f4; }
     .resource.pending .resource-status { color:var(--muted); }
-    .contact { margin-top:28px; font-size:12px; color:var(--muted); text-align:center; }
+    .citation-code { margin:24px 0 0; padding:24px; border:1px solid var(--line); border-radius:var(--radius); background:var(--white); color:var(--ink); white-space:pre-wrap; overflow-wrap:anywhere; font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+.contact { margin-top:28px; font-size:12px; color:var(--muted); text-align:center; }
     footer { border-top:1px solid var(--line); padding:25px 0 32px; }
     .footer-inner { display:flex; align-items:center; justify-content:space-between; gap:20px; font-size:11px; color:var(--muted); }
     .footer-inner a { text-decoration:none; }
@@ -492,13 +493,27 @@
     </section>
     <section class="band" id="resources">
       <div class="wrap">
-        <div class="section-head"><div><p class="section-number">05 / Explore &amp; build</p><h2>A foundation for<br>your next data world.</h2></div><p class="section-intro">Explore the synthesis engine on GitHub, find datasets and model releases in our Hugging Face collection, and read the paper using the PDF link above.</p></div>
+        <div class="section-head"><div><p class="section-number">05 / Explore &amp; build</p><h2>A foundation for<br>your next data world.</h2></div><p class="section-intro">Explore the synthesis engine on GitHub, find datasets and model releases in our Hugging Face collection, and read the paper on arXiv.</p></div>
         <div class="resource-grid">
           <a class="resource" href="https://github.com/Zhanli-Li/Data-World" target="_blank" rel="noopener noreferrer"><div class="resource-type"><span>Open-source engine</span><span aria-hidden="true">↗</span></div><h3>Code &amp; documentation</h3><p>DAG generation, world synthesis, task rubrics, and Harbor export. Includes examples and bilingual usage documentation.</p><span class="resource-status">Explore on GitHub →</span></a>
           <a class="resource" href="https://huggingface.co/collections/Zhanli-Li/dataworld" target="_blank" rel="noopener noreferrer" aria-label="Explore benchmark and training data in the DataWorld Hugging Face collection"><div class="resource-type"><span>Data release</span><span aria-hidden="true">↗</span></div><h3>Benchmark &amp; training data</h3><p>Curated analytical tasks with environments and grounded rubrics. Not bundled in the current code repository.</p><span class="resource-status">Explore on Hugging Face →</span></a>
           <a class="resource" href="https://huggingface.co/collections/Zhanli-Li/dataworld" target="_blank" rel="noopener noreferrer" aria-label="Explore DataWorld-35B-A3B in the DataWorld Hugging Face collection"><div class="resource-type"><span>Model release</span><span aria-hidden="true">↗</span></div><h3>DataWorld-35B-A3B</h3><p>A data agent trained with RL-zero on synthesized worlds. Model weights are not bundled in the code repository.</p><span class="resource-status">Explore on Hugging Face →</span></a>
         </div>
         <p class="contact">Correspondence: <a href="mailto:hongfeng03@meituan.com">Feng Hong</a> · <a href="mailto:yehj@lamda.nju.edu.cn">Hanjia Ye</a></p>
+      </div>
+    </section>
+    <section id="citation" aria-labelledby="citation-title">
+      <div class="wrap">
+        <div class="section-head"><div><p class="section-number">06 / Citation</p><h2 id="citation-title">Cite Data World.</h2></div><p class="section-intro">If you find our work useful, please cite the <a href="https://arxiv.org/abs/2610.21656" target="_blank" rel="noopener noreferrer">paper on arXiv</a> using the BibTeX entry below.</p></div>
+        <pre class="citation-code"><code>@misc{li2026dataworldscalingdata,
+      title={Data World: Scaling Data Environments from Scratch},
+      author={Zhanli Li and Zeyuan Xu and Chaoxu Pang and Zeyuan Liu and Anyang Ji and Te Sun and Kongcheng Zhang and Wenbo Xu and Xubin Yue and Shipeng Luo and Junjie Zhao and Yingfan Hua and Jingqing Ruan and Zhongda Su and Feng Hong and Zhizhao Zeng and Ke Zeng and Xunliang Cai and Hanjia Ye},
+      year={2026},
+      eprint={2610.21656},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2610.21656},
+}</code></pre>
       </div>
     </section>
   </main>

@@ -5,7 +5,7 @@
   <p>
     <a href="https://zhanli-li.github.io/Data-World/"><img src="https://img.shields.io/badge/Project%20Page-579187?style=flat-square" alt="项目主页"></a>
     <a href="https://huggingface.co/collections/Zhanli-Li/dataworld"><img src="https://img.shields.io/badge/Hugging%20Face-FFD21E?style=flat-square&logo=huggingface&logoColor=black" alt="Hugging Face 合集"></a>
-    <a href="assets/dataworld-preprint.pdf"><img src="https://img.shields.io/badge/Paper-PDF-6686A6?style=flat-square" alt="论文 PDF"></a>
+    <a href="https://arxiv.org/abs/2610.21656"><img src="https://img.shields.io/badge/Paper-arXiv-6686A6?style=flat-square" alt="arXiv 论文"></a>
   </p>
   <p><a href="README.md">English</a> · <strong>中文</strong></p>
   <p>
@@ -141,3 +141,19 @@ python -m task export \
 - [任务合成与 Harbor 导出](doc/task.zh-CN.md)：采样、产物布局、评分与凭据管理。
 - [Rubric 设计](task/README.zh-CN.md)：评分分区、正负评分项与泄漏边界。
 - [示例](examples/README.zh-CN.md) · [批量脚本](scripts/README.zh-CN.md)
+
+## 引用
+
+如果本工作对你有帮助，欢迎引用我们的论文：
+
+```bibtex
+@misc{li2026dataworldscalingdata,
+      title={Data World: Scaling Data Environments from Scratch},
+      author={Zhanli Li and Zeyuan Xu and Chaoxu Pang and Zeyuan Liu and Anyang Ji and Te Sun and Kongcheng Zhang and Wenbo Xu and Xubin Yue and Shipeng Luo and Junjie Zhao and Yingfan Hua and Jingqing Ruan and Zhongda Su and Feng Hong and Zhizhao Zeng and Ke Zeng and Xunliang Cai and Hanjia Ye},
+      year={2026},
+      eprint={2610.21656},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2610.21656},
+}
+```
