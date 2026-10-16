@@ -149,7 +149,7 @@ If you find our work useful, please cite our paper:
 ```bibtex
 @misc{li2026dataworldscalingdata,
       title={Data World: Scaling Data Environments from Scratch},
-      author={Zhanli Li and Zeyuan Xu and Chaoxu Pang and Zeyuan Liu and Anyang Ji and Te Sun and Kongcheng Zhang and Wenbo Xu and Xubin Yue and Shipeng Luo and Junjie Zhao and Yingfan Hua and Jingqing Ruan and Zhongda Su and Feng Hong and Zhizhao Zeng and Ke Zeng and Xunliang Cai and Hanjia Ye},
+      author={Zhanli Li and Zeyuan Xu and Chaoxu Pang and Zeyuan Liu and Anyang-Ji and Te Sun and Kongcheng Zhang and Wenbo Xu and Xubin Yue and Shipeng Luo and Junjie Zhao and Yingfan Hua and Jingqing Ruan and Zhongda Su and Feng Hong and Zhizhao Zeng and Ke Zeng and Xunliang Cai and Hanjia-Ye},
       year={2026},
       eprint={2610.21656},
       archivePrefix={arXiv},
