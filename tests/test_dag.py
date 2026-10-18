@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 import unittest
+from pathlib import Path
 
 from data_world import WorldGenError
 from data_world.dag import topo_layers, validate_and_normalize_dag
@@ -79,6 +81,21 @@ class DagValidationTests(unittest.TestCase):
             with self.subTest(name=name):
                 with self.assertRaisesRegex(WorldGenError, message):
                     validate_and_normalize_dag(raw)
+
+    def test_examples_use_current_dag_contract(self) -> None:
+        examples = Path(__file__).resolve().parents[1] / "examples"
+        paths = sorted(examples.glob("*_dag.json"))
+        self.assertTrue(paths, "No example DAGs found")
+        for path in paths:
+            with self.subTest(example=path.name):
+                raw = json.loads(path.read_text(encoding="utf-8"))
+                validate_and_normalize_dag(raw)
+                for node in raw["nodes"]:
+                    self.assertTrue(node["system"].strip())
+                    self.assertTrue(node["grain"].strip())
+                for edge in raw["edges"]:
+                    self.assertEqual(set(edge), {"src", "dst", "note"})
+                    self.assertTrue(edge["note"].strip())
 
     def test_cycle_is_rejected(self) -> None:
         raw = {

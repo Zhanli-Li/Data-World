@@ -78,43 +78,36 @@
     {
       "src": "weather_conditions",
       "dst": "pest_pressure",
-      "sign": "+",
       "note": "持续高温高湿通常提高病虫害发生率，但影响程度因作物类型而异"
     },
     {
       "src": "farm_characteristics",
       "dst": "pest_pressure",
-      "sign": "-",
       "note": "更高的管理水平和更好的田间条件通常降低病虫害压力"
     },
     {
       "src": "weather_conditions",
       "dst": "crop_yield",
-      "sign": "+",
-      "note": "适宜温度、降雨和日照提高产量；极端天气应通过非线性惩罚机制体现"
+      "note": "生长季温度、降雨与日照在作物适宜区间内提高单位面积产量，超过耐受阈值的高温、干旱或过量降雨则使产量下降，且阈值因作物类型而异"
     },
     {
       "src": "farm_characteristics",
       "dst": "crop_yield",
-      "sign": "+",
       "note": "土壤质量、管理能力和农场规模共同影响单位面积产量与总产量"
     },
     {
       "src": "pest_pressure",
       "dst": "crop_yield",
-      "sign": "-",
       "note": "病虫害压力提高会降低收获面积和单位面积产量"
     },
     {
       "src": "crop_yield",
       "dst": "market_supply",
-      "sign": "+",
-      "note": "农场产量增加通常提高后续进入区域市场的可交易供给"
+      "note": "同一区域同类作物的收获量增加会在收获后的上市窗口提高市场入场量与可用库存，传导具有季节性和时间滞后"
     },
     {
       "src": "market_supply",
       "dst": "market_price",
-      "sign": "-",
       "note": "在其他条件相近时，市场供给增加通常压低成交价格"
     }
   ]

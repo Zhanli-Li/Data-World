@@ -140,91 +140,76 @@
     {
       "src": "marketing_campaign",
       "dst": "order",
-      "sign": "+",
-      "note": "投放力度与促销折扣提升下单量，但高折扣会吸引价格敏感、后续价值较低的顾客"
+      "note": "投放增加曝光并提高订单量，但边际转化随投放力度增加而递减；促销折扣提高价格敏感客群的下单概率并降低单笔实付金额，效果因渠道与客群而异"
     },
     {
       "src": "customer_profile",
       "dst": "order",
-      "sign": "+",
       "note": "高会员层级顾客下单更频繁、客单更高，异质性明显"
     },
     {
       "src": "product_catalog",
       "dst": "order",
-      "sign": "+",
-      "note": "品牌层级与定价影响转化，新品上架期存在时间效应"
+      "note": "较高定价在其他条件相近时降低下单概率并提高单件实付金额，品牌层级调节价格敏感性，新品上架带来的转化变化随上市时间衰减"
     },
     {
       "src": "product_catalog",
       "dst": "product_quality_issue",
-      "sign": "+",
       "note": "低品牌层级、特定供应地区商品的缺陷率与履约延迟更高"
     },
     {
       "src": "order",
       "dst": "product_quality_issue",
-      "sign": "+",
       "note": "订单量与配送时段决定暴露的质量/履约问题数量"
     },
     {
       "src": "order",
       "dst": "support_ticket",
-      "sign": "+",
-      "note": "订单是工单的前置事实；工单文本中会引用商品与下单情境"
+      "note": "订单数量增加会扩大售后工单的潜在发生量，购买数量与实付金额影响顾客的诉求和处理成本，工单在下单后创建并引用对应订单情境"
     },
     {
       "src": "product_quality_issue",
       "dst": "support_ticket",
-      "sign": "+",
       "note": "缺陷与延迟显著提高开单概率，且决定工单文本的主题与情绪强度"
     },
     {
       "src": "support_ticket",
       "dst": "refund_request",
-      "sign": "+",
       "note": "严重或未解决的工单升级为退款申诉；申诉理由文本承接工单语义"
     },
     {
       "src": "product_quality_issue",
       "dst": "refund_request",
-      "sign": "+",
       "note": "质量问题越严重，退款金额与获批概率越高"
     },
     {
       "src": "support_ticket",
       "dst": "csat",
-      "sign": "-",
       "note": "处理时长越长、未解决的工单拉低满意度评分"
     },
     {
       "src": "product_quality_issue",
       "dst": "product_review",
-      "sign": "-",
       "note": "质量问题拉低评分并使评论正文出现负面主题词"
     },
     {
       "src": "customer_profile",
       "dst": "product_review",
-      "sign": "+",
-      "note": "不同客群的打分基线与表达风格存在系统性差异（评分/文本异质性）"
+      "note": "会员层级与价格敏感性影响顾客的评价预期、打分基线和评论表达风格，相同质量体验在不同客群中可产生不同评分与文本情绪"
     },
     {
       "src": "product_review",
       "dst": "repeat_purchase",
-      "sign": "+",
-      "note": "自身好评与高评分对应更强的复购意愿"
+      "note": "顾客通过评价表达并强化对商品的认可或不满，正面评价提高评价后窗口内的再次购买概率，负面评价降低该概率，影响强度因客群而异"
     },
     {
       "src": "csat",
       "dst": "repeat_purchase",
-      "sign": "+",
       "note": "满意度越高复购越多、流失越少"
     },
     {
       "src": "refund_request",
       "dst": "repeat_purchase",
-      "sign": "-",
       "note": "经历退款申诉的顾客复购下降、流失上升，但成功快速退款可部分缓解"
     }
   ]
